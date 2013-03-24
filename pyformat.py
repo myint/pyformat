@@ -19,7 +19,7 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-"""Formats Python code (using autopep8, docformatter, etc.)."""
+"""Formats Python code (using autoflake, autopep8, docformatter, etc.)."""
 
 from __future__ import print_function
 
@@ -27,6 +27,7 @@ import errno
 import io
 import os
 
+import autoflake
 import autopep8
 import docformatter
 import unify
@@ -42,6 +43,7 @@ except NameError:
 
 
 FORMATTERS = [
+    autoflake.fix_code,
     autopep8.fix_string,
     docformatter.format_code,
     unify.format_code

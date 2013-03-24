@@ -16,7 +16,7 @@ def version():
 with open('README.rst') as readme:
     setup(name='pyformat',
           version=version(),
-          description='Formats Python code (using autopep8, '
+          description='Formats Python code (using autoflake, autopep8, '
                       ' docformatter, etc.).',
           long_description=readme.read(),
           license='Expat License',
@@ -30,6 +30,7 @@ with open('README.rst') as readme:
                        'License :: OSI Approved :: MIT License'],
           keywords='formatter, style',
           py_modules=['pyformat'],
-          install_requires=['autopep8', 'docformatter', 'unify'],
+          install_requires=['autoflake', 'autopep8', 'docformatter',
+                            'pep8', 'pyflakes', 'unify'],
           scripts=['pyformat'],
           test_suite='test_pyformat')
