@@ -2,7 +2,7 @@
 """Setup for pyformat."""
 
 import ast
-from distutils import core
+from setuptools import setup
 
 
 def version():
@@ -14,20 +14,22 @@ def version():
 
 
 with open('README.rst') as readme:
-    core.setup(name='pyformat',
-               version=version(),
-               description='Formats Python code (using autopep8, '
-                           ' docformatter, etc.).',
-               long_description=readme.read(),
-               license='Expat License',
-               author='Steven Myint',
-               url='https://github.com/myint/pyformat',
-               classifiers=['Intended Audience :: Developers',
-                            'Environment :: Console',
-                            'Programming Language :: Python :: 2.6',
-                            'Programming Language :: Python :: 2.7',
-                            'Programming Language :: Python :: 3',
-                            'License :: OSI Approved :: MIT License'],
-               keywords='strings, formatter, style',
-               py_modules=['pyformat'],
-               scripts=['pyformat'])
+    setup(name='pyformat',
+          version=version(),
+          description='Formats Python code (using autopep8, '
+                      ' docformatter, etc.).',
+          long_description=readme.read(),
+          license='Expat License',
+          author='Steven Myint',
+          url='https://github.com/myint/pyformat',
+          classifiers=['Intended Audience :: Developers',
+                       'Environment :: Console',
+                       'Programming Language :: Python :: 2.6',
+                       'Programming Language :: Python :: 2.7',
+                       'Programming Language :: Python :: 3',
+                       'License :: OSI Approved :: MIT License'],
+          keywords='formatter, style',
+          py_modules=['pyformat'],
+          install_requires=['autopep8', 'docformatter', 'unify'],
+          scripts=['pyformat'],
+          test_suite='test_pyformat')
