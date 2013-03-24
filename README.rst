@@ -5,7 +5,19 @@ pyformat
    :target: https://travis-ci.org/myint/pyformat
    :alt: Build status
 
-Formats Python code (using autoflake, autopep8, docformatter, etc.).
+Formats Python code (using autoflake_, autopep8_, docformatter_, etc.).
+
+.. _autoflake: https://github.com/myint/autoflake
+.. _autopep8: https://github.com/hhatto/autopep8
+.. _docformatter: https://github.com/myint/docformatter
+
+
+Installation
+------------
+From pip::
+
+    $ pip install --upgrade pyformat
+
 
 Example
 -------
