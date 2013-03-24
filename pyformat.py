@@ -76,8 +76,8 @@ def format_code(source):
     """Return formatted source code."""
     formatted_source = source
 
-    for format_code in FORMATTERS:
-        formatted_source = format_code(formatted_source)
+    for fix in FORMATTERS:
+        formatted_source = fix(formatted_source)
 
     return formatted_source
 
