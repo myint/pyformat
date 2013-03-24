@@ -5,6 +5,7 @@
 import contextlib
 import io
 import tempfile
+import unittest
 
 import pyformat
 
