@@ -6,12 +6,6 @@ import contextlib
 import io
 import tempfile
 
-try:
-    # Python 2.6
-    import unittest2 as unittest
-except ImportError:
-    import unittest
-
 import pyformat
 
 
