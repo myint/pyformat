@@ -45,7 +45,8 @@ except NameError:
 FORMATTERS = [
     autoflake.fix_code,
     autopep8.fix_string,
-    docformatter.format_code,
+    lambda code: docformatter.format_code(code,
+                                          summary_wrap_length=79),
     unify.format_code
 ]
 
