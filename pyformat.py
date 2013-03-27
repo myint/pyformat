@@ -42,15 +42,6 @@ except NameError:
     unicode = str
 
 
-FORMATTERS = [
-    autoflake.fix_code,
-    autopep8.fix_string,
-    lambda code: docformatter.format_code(code,
-                                          summary_wrap_length=79),
-    unify.format_code
-]
-
-
 def open_with_encoding(filename, encoding, mode='r'):
     """Return opened file with a specific encoding."""
     return io.open(filename, mode=mode, encoding=encoding,
@@ -73,11 +64,29 @@ def detect_encoding(filename):
         return 'latin-1'
 
 
-def format_code(source):
+def formatters(aggressive):
+    """Return list of code formatters."""
+    if aggressive:
+        autopep8_options = autopep8.parse_args(['', '--aggressive'])[0]
+    else:
+        autopep8_options = None
+
+    return [
+        autoflake.fix_code,
+        lambda code: autopep8.fix_string(
+            code,
+            options=autopep8_options),
+        lambda code: docformatter.format_code(code,
+                                              summary_wrap_length=79),
+        unify.format_code
+    ]
+
+
+def format_code(source, aggressive=False):
     """Return formatted source code."""
     formatted_source = source
 
-    for fix in FORMATTERS:
+    for fix in formatters(aggressive):
         formatted_source = fix(formatted_source)
 
     return formatted_source
@@ -92,7 +101,7 @@ def format_file(filename, args, standard_out):
     if not source:
         return
 
-    formatted_source = format_code(source)
+    formatted_source = format_code(source, aggressive=args.aggressive)
 
     if source != formatted_source:
         if args.in_place:
@@ -117,6 +126,8 @@ def main(argv, standard_out, standard_error):
                         help='make changes to files instead of printing diffs')
     parser.add_argument('-r', '--recursive', action='store_true',
                         help='drill down directories recursively')
+    parser.add_argument('-a', '--aggressive', action='store_true',
+                        help='use more aggressive formatters')
     parser.add_argument('--version', action='version',
                         version='%(prog)s ' + __version__)
     parser.add_argument('files', nargs='+',

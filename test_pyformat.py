@@ -23,12 +23,24 @@ class TestUnits(unittest.TestCase):
                          pyformat.format_code(
                              unicode('x = "abc" \\\n"next"\n')))
 
+    def test_format_code_with_aggressive(self):
+        self.assertEqual('True\n',
+                         pyformat.format_code(
+                             unicode('True == True\n'),
+                             aggressive=True))
+
+    def test_format_code_without_aggressive(self):
+        self.assertEqual('True == True\n',
+                         pyformat.format_code(
+                             unicode('True == True\n'),
+                             aggressive=False))
+
 
 class TestSystem(unittest.TestCase):
 
     def test_diff(self):
         with temporary_file('''\
-if True:
+if True == True:
     x = "abc"
 ''') as filename:
             output_file = io.StringIO()
@@ -37,8 +49,25 @@ if True:
                           standard_error=None)
             self.assertEqual(unicode('''\
 @@ -1,2 +1,2 @@
- if True:
+ if True == True:
 -    x = "abc"
++    x = 'abc'
+'''), '\n'.join(output_file.getvalue().split('\n')[2:]))
+
+    def test_diff_with_aggressive(self):
+        with temporary_file('''\
+if True == True:
+    x = "abc"
+''') as filename:
+            output_file = io.StringIO()
+            pyformat.main(argv=['my_fake_program', '--aggressive', filename],
+                          standard_out=output_file,
+                          standard_error=None)
+            self.assertEqual(unicode('''\
+@@ -1,2 +1,2 @@
+-if True == True:
+-    x = "abc"
++if True:
 +    x = 'abc'
 '''), '\n'.join(output_file.getvalue().split('\n')[2:]))
 
