@@ -89,6 +89,9 @@ def format_file(filename, args, standard_out):
     with open_with_encoding(filename, encoding=encoding) as input_file:
         source = input_file.read()
 
+    if not source:
+        return
+
     formatted_source = format_code(source)
 
     if source != formatted_source:
