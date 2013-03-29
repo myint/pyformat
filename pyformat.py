@@ -141,8 +141,7 @@ def main(argv, standard_out, standard_error):
         if args.recursive and os.path.isdir(name):
             for root, directories, children in os.walk(name):
                 filenames += [os.path.join(root, f) for f in children
-                              if f.endswith('.py') and
-                              not f.startswith('.')]
+                              if autopep8.match_file(f, exclude=[])]
                 for d in directories:
                     if d.startswith('.'):
                         directories.remove(d)
