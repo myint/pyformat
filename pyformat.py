@@ -130,12 +130,13 @@ def _format_file(parameters):
 
 
 def format_multiple_files(filenames, args, standard_out, standard_error):
-    """Fix list of files.
+    """Format files.
 
     Optionally format files recursively.
 
     """
-    filenames = autopep8.find_files(filenames, args.recursive, args.exclude)
+    filenames = autopep8.find_files(list(filenames),
+                                    args.recursive, args.exclude)
     if args.jobs > 1:
         import multiprocessing
         pool = multiprocessing.Pool(args.jobs)
@@ -172,5 +173,4 @@ def main(argv, standard_out, standard_error):
 
     args = parser.parse_args(argv[1:])
 
-    filenames = list(set(args.files))
-    format_multiple_files(filenames, args, standard_out, standard_error)
+    format_multiple_files(set(args.files), args, standard_out, standard_error)
