@@ -101,14 +101,14 @@ def _format_file(parameters):
     (filename, args, _, standard_error) = parameters
 
     if args.verbose:
-        print('[file:{0}]'.format(filename),
+        print(unicode('[file:{0}]'.format(filename)),
               file=standard_error)
     try:
         format_file(*parameters[:-1])
     except IOError as exception:
         if exception.errno == errno.EPIPE:
             raise
-        print(str(exception), file=standard_error)
+        print(unicode(exception), file=standard_error)
 
 
 def format_multiple_files(filenames, args, standard_out, standard_error):

@@ -79,6 +79,20 @@ if True == True:
                           standard_error=None)
             self.assertEqual('', output_file.getvalue())
 
+    def test_diff_with_nonexistent_file(self):
+        output_file = io.StringIO()
+        pyformat.main(argv=['my_fake_program', 'nonexistent_file'],
+                      standard_out=output_file,
+                      standard_error=output_file)
+        self.assertIn('no such file', output_file.getvalue().lower())
+
+    def test_verbose(self):
+        output_file = io.StringIO()
+        pyformat.main(argv=['my_fake_program', '--verbose', __file__],
+                      standard_out=output_file,
+                      standard_error=output_file)
+        self.assertIn('.py', output_file.getvalue())
+
     def test_in_place(self):
         with temporary_file('''\
 if True:
