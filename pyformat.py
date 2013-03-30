@@ -181,4 +181,9 @@ def main(argv, standard_out, standard_error):
 
     args = parser.parse_args(argv[1:])
 
+    if args.jobs > 1 and not args.in_place:
+        print(unicode('parallel jobs requires --in-place'),
+              file=standard_error)
+        return 1
+
     format_multiple_files(set(args.files), args, standard_out, standard_error)

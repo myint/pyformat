@@ -94,6 +94,31 @@ if True:
     x = 'abc'
 ''', f.read())
 
+    def test_multiple_jobs(self):
+        with temporary_file('''\
+if True:
+    x = "abc"
+''') as filename:
+            output_file = io.StringIO()
+            pyformat.main(argv=['my_fake_program', '--in-place',
+                                '--jobs=2', filename],
+                          standard_out=output_file,
+                          standard_error=None)
+            with open(filename) as f:
+                self.assertEqual('''\
+if True:
+    x = 'abc'
+''', f.read())
+
+    def test_multiple_jobs_should_require_in_place(self):
+        output_file = io.StringIO()
+        pyformat.main(argv=['my_fake_program',
+                            '--jobs=2', __file__],
+                      standard_out=output_file,
+                      standard_error=output_file)
+
+        self.assertIn('requires --in-place', output_file.getvalue())
+
     def test_ignore_hidden_directories(self):
         with temporary_directory() as directory:
             with temporary_directory(prefix='.',
