@@ -2,6 +2,7 @@
 """Setup for pyformat."""
 
 import ast
+
 from setuptools import setup
 
 
