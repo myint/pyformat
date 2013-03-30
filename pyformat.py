@@ -23,9 +23,7 @@
 
 from __future__ import print_function
 
-import errno
 import io
-import os
 
 import autoflake
 import autopep8
@@ -118,6 +116,37 @@ def format_file(filename, args, standard_out):
             standard_out.write(unicode().join(diff))
 
 
+def _format_file(parameters):
+    """Helper function for optionally running format_file() in parallel."""
+    (filename, args, _, standard_error) = parameters
+
+    if args.verbose:
+        print('[file:{0}]'.format(filename),
+              file=standard_error)
+    try:
+        format_file(*parameters[:-1])
+    except IOError as error:
+        print(str(error), file=standard_error)
+
+
+def format_multiple_files(filenames, args, standard_out, standard_error):
+    """Fix list of files.
+
+    Optionally format files recursively.
+
+    """
+    filenames = autopep8.find_files(filenames, args.recursive, args.exclude)
+    if args.jobs > 1:
+        import multiprocessing
+        pool = multiprocessing.Pool(args.jobs)
+        pool.map(_format_file,
+                 [(name, args, standard_out, standard_error)
+                  for name in filenames])
+    else:
+        for name in filenames:
+            _format_file((name, args, standard_out, standard_error))
+
+
 def main(argv, standard_out, standard_error):
     """Main entry point."""
     import argparse
@@ -128,6 +157,14 @@ def main(argv, standard_out, standard_error):
                         help='drill down directories recursively')
     parser.add_argument('-a', '--aggressive', action='store_true',
                         help='use more aggressive formatters')
+    parser.add_argument('-j', '--jobs', type=int, metavar='n', default=1,
+                        help='number of parallel jobs; '
+                             'match CPU count if value is less than 1')
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help='print verbose messages')
+    parser.add_argument('--exclude', metavar='globs', default='',
+                        help='exclude files/directories that match these '
+                             'comma-separated globs')
     parser.add_argument('--version', action='version',
                         version='%(prog)s ' + __version__)
     parser.add_argument('files', nargs='+',
@@ -136,19 +173,4 @@ def main(argv, standard_out, standard_error):
     args = parser.parse_args(argv[1:])
 
     filenames = list(set(args.files))
-    while filenames:
-        name = filenames.pop(0)
-        if args.recursive and os.path.isdir(name):
-            for root, directories, children in os.walk(name):
-                filenames += [os.path.join(root, f) for f in children
-                              if autopep8.match_file(f, exclude=[])]
-                for d in directories:
-                    if d.startswith('.'):
-                        directories.remove(d)
-        else:
-            try:
-                format_file(name, args=args, standard_out=standard_out)
-            except IOError as exception:
-                if exception.errno == errno.EPIPE:
-                    return
-                print(exception, file=standard_error)
+    format_multiple_files(filenames, args, standard_out, standard_error)
