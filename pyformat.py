@@ -157,7 +157,11 @@ def format_multiple_files(filenames, args, standard_out, standard_error):
 
 
 def main(argv, standard_out, standard_error):
-    """Main entry point."""
+    """Main entry point.
+
+    Return exit status. 0 means no error.
+
+    """
     import argparse
     parser = argparse.ArgumentParser(description=__doc__, prog='unify')
     parser.add_argument('-i', '--in-place', action='store_true',
