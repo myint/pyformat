@@ -23,6 +23,7 @@
 
 from __future__ import print_function
 
+import errno
 import io
 
 import autoflake
@@ -125,8 +126,10 @@ def _format_file(parameters):
               file=standard_error)
     try:
         format_file(*parameters[:-1])
-    except IOError as error:
-        print(str(error), file=standard_error)
+    except IOError as exception:
+        if exception.errno == errno.EPIPE:
+            raise
+        print(str(exception), file=standard_error)
 
 
 def format_multiple_files(filenames, args, standard_out, standard_error):
@@ -137,15 +140,20 @@ def format_multiple_files(filenames, args, standard_out, standard_error):
     """
     filenames = autopep8.find_files(list(filenames),
                                     args.recursive, args.exclude)
-    if args.jobs > 1:
-        import multiprocessing
-        pool = multiprocessing.Pool(args.jobs)
-        pool.map(_format_file,
-                 [(name, args, standard_out, standard_error)
-                  for name in filenames])
-    else:
-        for name in filenames:
-            _format_file((name, args, standard_out, standard_error))
+    try:
+        if args.jobs > 1:
+            import multiprocessing
+            pool = multiprocessing.Pool(args.jobs)
+            pool.map(_format_file,
+                     [(name, args, standard_out, standard_error)
+                      for name in filenames])
+        else:
+            for name in filenames:
+                _format_file((name, args, standard_out, standard_error))
+    except IOError as exception:
+        # Ignore broken pipe.
+        if exception.errno != errno.EPIPE:
+            raise
 
 
 def main(argv, standard_out, standard_error):
