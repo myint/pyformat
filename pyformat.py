@@ -142,7 +142,7 @@ def main(argv, standard_out, standard_error):
 
     """
     import argparse
-    parser = argparse.ArgumentParser(description=__doc__, prog='unify')
+    parser = argparse.ArgumentParser(description=__doc__, prog='pyformat')
     parser.add_argument('-i', '--in-place', action='store_true',
                         help='make changes to files instead of printing diffs')
     parser.add_argument('-r', '--recursive', action='store_true',
