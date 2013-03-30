@@ -41,28 +41,6 @@ except NameError:
     unicode = str
 
 
-def open_with_encoding(filename, encoding, mode='r'):
-    """Return opened file with a specific encoding."""
-    return io.open(filename, mode=mode, encoding=encoding,
-                   newline='')  # Preserve line endings
-
-
-def detect_encoding(filename):
-    """Return file encoding."""
-    try:
-        with open(filename, 'rb') as input_file:
-            from lib2to3.pgen2 import tokenize as lib2to3_tokenize
-            encoding = lib2to3_tokenize.detect_encoding(input_file.readline)[0]
-
-            # Check for correctness of encoding.
-            with open_with_encoding(filename, encoding) as input_file:
-                input_file.read()
-
-        return encoding
-    except (SyntaxError, LookupError, UnicodeDecodeError):
-        return 'latin-1'
-
-
 def formatters(aggressive):
     """Return list of code formatters."""
     if aggressive:
@@ -93,8 +71,9 @@ def format_code(source, aggressive=False):
 
 def format_file(filename, args, standard_out):
     """Run format_code() on a file."""
-    encoding = detect_encoding(filename)
-    with open_with_encoding(filename, encoding=encoding) as input_file:
+    encoding = autopep8.detect_encoding(filename)
+    with autopep8.open_with_encoding(filename,
+                                     encoding=encoding) as input_file:
         source = input_file.read()
 
     if not source:
@@ -104,8 +83,8 @@ def format_file(filename, args, standard_out):
 
     if source != formatted_source:
         if args.in_place:
-            with open_with_encoding(filename, mode='w',
-                                    encoding=encoding) as output_file:
+            with autopep8.open_with_encoding(filename, mode='w',
+                                             encoding=encoding) as output_file:
                 output_file.write(formatted_source)
         else:
             import difflib
