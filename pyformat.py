@@ -131,8 +131,8 @@ def format_multiple_files(filenames, args, standard_out, standard_error):
                 _format_file((name, args, standard_out, standard_error))
     except IOError as exception:
         # Ignore broken pipe.
-        if exception.errno != errno.EPIPE:
-            raise
+        if exception.errno == errno.EPIPE:
+            pass
 
 
 def main(argv, standard_out, standard_error):
