@@ -32,7 +32,7 @@ with open('README.rst') as readme:
               'Programming Language :: Python :: 3.2',
               'Programming Language :: Python :: 3.3',
               'Topic :: Software Development :: Libraries :: Python Modules'],
-          keywords='formatter, style, beautifier, format, beautify, code',
+          keywords='beautify, code, format, formatter, reformat, style',
           py_modules=['pyformat'],
           install_requires=['autoflake', 'autopep8', 'docformatter',
                             'pep8', 'pyflakes', 'unify'],
