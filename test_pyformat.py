@@ -153,6 +153,45 @@ if True:
                         '',
                         output_file.getvalue().strip())
 
+    def test_recursive(self):
+        with temporary_directory() as directory:
+            with temporary_file("""\
+if True:
+    x = "abc"
+""", prefix='food', directory=directory):
+
+                output_file = io.StringIO()
+                pyformat.main(argv=['my_fake_program',
+                                    '--recursive',
+                                    '--exclude=zap,x*oo*',
+                                    directory],
+                              standard_out=output_file,
+                              standard_error=None)
+                self.assertEqual("""\
+@@ -1,2 +1,2 @@
+ if True:
+-    x = "abc"
++    x = 'abc'
+""", '\n'.join(output_file.getvalue().split('\n')[2:]))
+
+    def test_exclude(self):
+        with temporary_directory() as directory:
+            with temporary_file("""\
+if True:
+    x = "abc"
+""", prefix='food', directory=directory):
+
+                output_file = io.StringIO()
+                pyformat.main(argv=['my_fake_program',
+                                    '--recursive',
+                                    '--exclude=zap,*oo*',
+                                    directory],
+                              standard_out=output_file,
+                              standard_error=None)
+                self.assertEqual(
+                    '',
+                    output_file.getvalue().strip())
+
 
 @contextlib.contextmanager
 def temporary_file(contents, directory='.', prefix=''):

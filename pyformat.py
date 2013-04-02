@@ -135,12 +135,7 @@ def format_multiple_files(filenames, args, standard_out, standard_error):
             pass
 
 
-def main(argv, standard_out, standard_error):
-    """Main entry point.
-
-    Return exit status. 0 means no error.
-
-    """
+def parse_args(argv):
     import argparse
     parser = argparse.ArgumentParser(description=__doc__, prog='pyformat')
     parser.add_argument('-i', '--in-place', action='store_true',
@@ -154,7 +149,7 @@ def main(argv, standard_out, standard_error):
                              'match CPU count if value is less than 1')
     parser.add_argument('-v', '--verbose', action='store_true',
                         help='print verbose messages')
-    parser.add_argument('--exclude', metavar='globs', default='',
+    parser.add_argument('--exclude', metavar='globs',
                         help='exclude files/directories that match these '
                              'comma-separated globs')
     parser.add_argument('--version', action='version',
@@ -163,6 +158,22 @@ def main(argv, standard_out, standard_error):
                         help='files to format')
 
     args = parser.parse_args(argv[1:])
+
+    if args.exclude:
+        args.exclude = args.exclude.split(',')
+    else:
+        args.exclude = []
+
+    return args
+
+
+def main(argv, standard_out, standard_error):
+    """Main entry point.
+
+    Return exit status. 0 means no error.
+
+    """
+    args = parse_args(argv)
 
     if args.jobs > 1 and not args.in_place:
         print(unicode('parallel jobs requires --in-place'),
