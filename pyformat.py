@@ -32,7 +32,7 @@ import docformatter
 import unify
 
 
-__version__ = '0.2'
+__version__ = '0.2.1'
 
 
 try:
