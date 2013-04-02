@@ -136,6 +136,7 @@ def format_multiple_files(filenames, args, standard_out, standard_error):
 
 
 def parse_args(argv):
+    """Return parsed arguments."""
     import argparse
     parser = argparse.ArgumentParser(description=__doc__, prog='pyformat')
     parser.add_argument('-i', '--in-place', action='store_true',
