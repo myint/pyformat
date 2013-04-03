@@ -34,7 +34,9 @@ with open('README.rst') as readme:
               'Topic :: Software Development :: Libraries :: Python Modules'],
           keywords='beautify, code, format, formatter, reformat, style',
           py_modules=['pyformat'],
-          install_requires=['autoflake', 'autopep8>=0.8.7', 'docformatter',
-                            'pep8', 'pyflakes', 'unify'],
+          install_requires=['autoflake>=0.2.3',
+                            'autopep8>=0.8.7',
+                            'docformatter',
+                            'unify'],
           scripts=['pyformat'],
           test_suite='test_pyformat')
