@@ -13,7 +13,7 @@ before_script:
 
 install:
     - python setup.py --quiet install
-    - pip install coveralls
+    - pip install --quiet coveralls
 
 script:
     - python test_pyformat.py
