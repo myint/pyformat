@@ -13,8 +13,12 @@ before_script:
 
 install:
     - python setup.py --quiet install
+    - pip install coveralls
 
 script:
     - python test_pyformat.py
-    - coverage run test_pyformat.py; true
-    - coverage report --show-missing --omit='*/distutils/*'; true
+    - coverage run test_pyformat.py
+    - coverage report --show-missing
+
+after_script:
+    - coveralls
