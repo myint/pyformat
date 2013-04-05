@@ -4,6 +4,9 @@ pyformat
 .. image:: https://travis-ci.org/myint/pyformat.png?branch=master
    :target: https://travis-ci.org/myint/pyformat
    :alt: Build status
+.. image:: https://coveralls.io/repos/myint/pyformat/badge.png?branch=master
+   :target: https://coveralls.io/r/myint/pyformat
+   :alt: Test coverage status
 
 Formats Python code (using autoflake_, autopep8_, docformatter_, etc.).
 
