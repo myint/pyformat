@@ -17,7 +17,7 @@ install:
 
 script:
     - python test_pyformat.py
-    - coverage run test_pyformat.py
+    - coverage run --omit='*/virtualenv/*' test_pyformat.py
     - coverage report --show-missing
 
 after_script:
