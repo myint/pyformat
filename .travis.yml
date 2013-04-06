@@ -13,6 +13,7 @@ before_script:
 
 install:
     - python setup.py --quiet install
+    - pip install --quiet coveralls
 
 script:
     - python test_pyformat.py
@@ -20,5 +21,4 @@ script:
     - coverage report --show-missing
 
 after_script:
-    - pip install --quiet coveralls
     - coveralls
