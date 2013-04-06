@@ -13,12 +13,12 @@ before_script:
 
 install:
     - python setup.py --quiet install
-    - pip install --quiet coveralls
 
 script:
     - python test_pyformat.py
-    - coverage run --omit='*/virtualenv/*' test_pyformat.py
+    - coverage run --branch --omit='*/virtualenv/*' test_pyformat.py
     - coverage report --show-missing
 
 after_script:
+    - pip install --quiet coveralls
     - coveralls
