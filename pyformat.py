@@ -106,8 +106,6 @@ def _format_file(parameters):
     try:
         format_file(*parameters[:-1])
     except IOError as exception:
-        if exception.errno == errno.EPIPE:
-            raise
         print(unicode(exception), file=standard_error)
 
 
@@ -119,20 +117,15 @@ def format_multiple_files(filenames, args, standard_out, standard_error):
     """
     filenames = autopep8.find_files(list(filenames),
                                     args.recursive, args.exclude)
-    try:
-        if args.jobs > 1:
-            import multiprocessing
-            pool = multiprocessing.Pool(args.jobs)
-            pool.map(_format_file,
-                     [(name, args, standard_out, standard_error)
-                      for name in filenames])
-        else:
-            for name in filenames:
-                _format_file((name, args, standard_out, standard_error))
-    except IOError as exception:
-        # Ignore broken pipe.
-        if exception.errno == errno.EPIPE:
-            pass
+    if args.jobs > 1:
+        import multiprocessing
+        pool = multiprocessing.Pool(args.jobs)
+        pool.map(_format_file,
+                 [(name, args, standard_out, standard_error)
+                  for name in filenames])
+    else:
+        for name in filenames:
+            _format_file((name, args, standard_out, standard_error))
 
 
 def parse_args(argv):
