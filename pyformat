@@ -22,11 +22,15 @@
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """pyformat utility."""
 
+import signal
 import sys
 import pyformat
 
 
 if __name__ == '__main__':
+    # Exit on broken pipe.
+    signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+
     try:
         sys.exit(pyformat.main(sys.argv,
                                standard_out=sys.stdout,
