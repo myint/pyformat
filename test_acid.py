@@ -7,7 +7,7 @@ import subprocess
 
 
 ROOT_PATH = os.path.abspath(os.path.dirname(__file__))
-AUTOFLAKE_BIN = os.path.join(ROOT_PATH, 'pyformat')
+PYFORMAT_BIN = os.path.join(ROOT_PATH, 'pyformat')
 
 import autopep8
 
@@ -63,7 +63,7 @@ def run(filename, verbose=False, options=None):
         import shutil
         shutil.copyfile(filename, temp_filename)
 
-        if 0 != subprocess.call([AUTOFLAKE_BIN, '--in-place', temp_filename] +
+        if 0 != subprocess.call([PYFORMAT_BIN, '--in-place', temp_filename] +
                                 options):
             sys.stderr.write('pyformat crashed on ' + filename + '\n')
             return False
@@ -110,7 +110,7 @@ def process_args():
     parser.add_argument(
         '--timeout',
         help='stop testing additional files after this amount of time '
-             '(default: %default)',
+             '(default: %(default)s)',
         default=-1,
         type=float)
 
