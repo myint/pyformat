@@ -28,7 +28,7 @@ Example
 
 After running::
 
-    $ pyformat example.py
+    $ pyformat --in-place example.py
 
 this code
 
