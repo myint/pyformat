@@ -86,12 +86,10 @@ def format_file(filename, args, standard_out):
                                              encoding=encoding) as output_file:
                 output_file.write(formatted_source)
         else:
-            import difflib
-            diff = difflib.unified_diff(
+            diff = autoflake.get_diff_text(
                 io.StringIO(source).readlines(),
                 io.StringIO(formatted_source).readlines(),
-                'before/' + filename,
-                'after/' + filename)
+                filename)
             standard_out.write(unicode().join(diff))
 
 
