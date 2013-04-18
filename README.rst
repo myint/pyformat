@@ -36,7 +36,7 @@ After running::
 
     $ pyformat --in-place example.py
 
-this code
+This code:
 
 .. code-block:: python
 
@@ -70,7 +70,7 @@ this code
        if factorial(10):
          launch_rocket()
 
-gets formatted into this
+Gets formatted into this:
 
 .. code-block:: python
 
