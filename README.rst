@@ -1,3 +1,4 @@
+========
 pyformat
 ========
 
@@ -13,7 +14,7 @@ pyformat
 
 
 Features
---------
+========
 
 - Formats code to follow the PEP 8 style guide (using autopep8_).
 - Removes unused imports (using autoflake_).
@@ -22,7 +23,7 @@ Features
 
 
 Installation
-------------
+============
 
 From pip::
 
@@ -30,7 +31,7 @@ From pip::
 
 
 Example
--------
+=======
 
 After running::
 
