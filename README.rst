@@ -9,15 +9,21 @@ pyformat
    :target: https://coveralls.io/r/myint/pyformat
    :alt: Test coverage status
 
-Formats Python code (using autoflake_, autopep8_, docformatter_, etc.).
+*pyformat* formats Python code to follow a consistent style.
 
-.. _autoflake: https://github.com/myint/autoflake
-.. _autopep8: https://github.com/hhatto/autopep8
-.. _docformatter: https://github.com/myint/docformatter
+
+Features
+--------
+
+- Formats code to follow the PEP 8 style guide (using autopep8_).
+- Removes unused imports (using autoflake_).
+- Formats docstrings to follow PEP 257 (using docformatter_).
+- Makes strings all use the same type of quote where possible (using unify_).
 
 
 Installation
 ------------
+
 From pip::
 
     $ pip install --upgrade pyformat
@@ -96,3 +102,9 @@ gets formatted into this
        print_factorial(5)
        if factorial(10):
            launch_rocket()
+
+
+.. _autoflake: https://github.com/myint/autoflake
+.. _autopep8: https://github.com/hhatto/autopep8
+.. _docformatter: https://github.com/myint/docformatter
+.. _unify: https://github.com/myint/unify

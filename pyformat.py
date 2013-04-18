@@ -19,7 +19,7 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-"""Formats Python code (using autoflake, autopep8, docformatter, etc.)."""
+"""Formats Python code to follow a consistent style."""
 
 from __future__ import print_function
 

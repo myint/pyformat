@@ -17,8 +17,7 @@ def version():
 with open('README.rst') as readme:
     setup(name='pyformat',
           version=version(),
-          description='Formats Python code (using autoflake, autopep8, '
-                      ' docformatter, etc.).',
+          description='Formats Python code to follow a consistent style.',
           long_description=readme.read(),
           license='Expat License',
           author='Steven Myint',
