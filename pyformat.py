@@ -24,6 +24,7 @@
 from __future__ import print_function
 
 import io
+import sys
 
 import autoflake
 import autopep8
@@ -97,6 +98,8 @@ def _format_file(parameters):
     """Helper function for optionally running format_file() in parallel."""
     (filename, args, _, standard_error) = parameters
 
+    standard_error = standard_error or sys.stderr
+
     if args.verbose:
         print(unicode('[file:{0}]'.format(filename)),
               file=standard_error)
@@ -118,7 +121,8 @@ def format_multiple_files(filenames, args, standard_out, standard_error):
         import multiprocessing
         pool = multiprocessing.Pool(args.jobs)
         pool.map(_format_file,
-                 [(name, args, standard_out, standard_error)
+                 [(name, args,
+                   None, None)  # multiprocessing cannot serialize io.
                   for name in filenames])
     else:
         for name in filenames:
