@@ -155,6 +155,10 @@ def parse_args(argv):
     else:
         args.exclude = []
 
+    if args.jobs < 1:
+        import multiprocessing
+        args.jobs = multiprocessing.cpu_count()
+
     return args
 
 

@@ -133,6 +133,12 @@ if True:
 
         self.assertIn('requires --in-place', output_file.getvalue())
 
+    def test_jobs_less_than_one_should_default_to_cpu_count(self):
+        args = pyformat.parse_args(['my_fake_program',
+                                    '--jobs=0', __file__])
+
+        self.assertGreater(args.jobs, 0)
+
     def test_ignore_hidden_directories(self):
         with temporary_directory() as directory:
             with temporary_directory(prefix='.',
