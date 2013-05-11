@@ -87,7 +87,7 @@ def format_file(filename, args, standard_out):
                                              encoding=encoding) as output_file:
                 output_file.write(formatted_source)
         else:
-            diff = autoflake.get_diff_text(
+            diff = autopep8.get_diff_text(
                 io.StringIO(source).readlines(),
                 io.StringIO(formatted_source).readlines(),
                 filename)

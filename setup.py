@@ -34,7 +34,7 @@ with open('README.rst') as readme:
           keywords='beautify, code, format, formatter, reformat, style',
           py_modules=['pyformat'],
           install_requires=['autoflake>=0.3.1',
-                            'autopep8>=0.8.7',
+                            'autopep8>=0.9',
                             'docformatter>=0.2.7',
                             'unify>=0.1.1'],
           scripts=['pyformat'],
