@@ -26,13 +26,13 @@ class TestUnits(unittest.TestCase):
     def test_format_code_with_aggressive(self):
         self.assertEqual('True\n',
                          pyformat.format_code(
-                             unicode('True == True\n'),
+                             unicode('import os\nTrue == True\n'),
                              aggressive=True))
 
     def test_format_code_without_aggressive(self):
-        self.assertEqual('True == True\n',
+        self.assertEqual('import os\nTrue == True\n',
                          pyformat.format_code(
-                             unicode('True == True\n'),
+                             unicode('import os\nTrue == True\n'),
                              aggressive=False))
 
 

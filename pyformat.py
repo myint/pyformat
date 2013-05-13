@@ -44,19 +44,15 @@ except NameError:
 def formatters(aggressive):
     """Return list of code formatters."""
     if aggressive:
+        yield autoflake.fix_code
+
         autopep8_options = autopep8.parse_args(['', '--aggressive'])[0]
     else:
         autopep8_options = None
 
-    return [
-        autoflake.fix_code,
-        lambda code: autopep8.fix_string(
-            code,
-            options=autopep8_options),
-        lambda code: docformatter.format_code(code,
-                                              summary_wrap_length=79),
-        unify.format_code
-    ]
+    yield lambda code: autopep8.fix_string(code, options=autopep8_options)
+    yield lambda code: docformatter.format_code(code, summary_wrap_length=79)
+    yield unify.format_code
 
 
 def format_code(source, aggressive=False):
