@@ -111,7 +111,7 @@ def process_args():
         default=-1,
         type=float)
 
-    parser.add_argument('--aggressive',
+    parser.add_argument('--aggressive', action='store_true',
                         help='pass to the pyformat "--aggressive" option')
 
     parser.add_argument('-v', '--verbose', action='store_true',
