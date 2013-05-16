@@ -22,6 +22,7 @@
 """Formats Python code to follow a consistent style."""
 
 from __future__ import print_function
+from __future__ import unicode_literals
 
 import io
 import sys
@@ -87,7 +88,7 @@ def format_file(filename, args, standard_out):
                 io.StringIO(source).readlines(),
                 io.StringIO(formatted_source).readlines(),
                 filename)
-            standard_out.write(unicode().join(diff))
+            standard_out.write(''.join(diff))
 
 
 def _format_file(parameters):
@@ -97,7 +98,7 @@ def _format_file(parameters):
     standard_error = standard_error or sys.stderr
 
     if args.verbose:
-        print(unicode('[file:{0}]'.format(filename)),
+        print('[file:{0}]'.format(filename),
               file=standard_error)
     try:
         format_file(*parameters[:-1])
@@ -171,7 +172,7 @@ def main(argv, standard_out, standard_error):
     args = parse_args(argv)
 
     if args.jobs > 1 and not args.in_place:
-        print(unicode('parallel jobs requires --in-place'),
+        print('parallel jobs requires --in-place',
               file=standard_error)
         return 1
 

@@ -2,6 +2,8 @@
 
 """Test suite for pyformat."""
 
+from __future__ import unicode_literals
+
 import contextlib
 import io
 import tempfile
@@ -10,29 +12,23 @@ import unittest
 import pyformat
 
 
-try:
-    unicode
-except NameError:
-    unicode = str
-
-
 class TestUnits(unittest.TestCase):
 
     def test_format_code(self):
         self.assertEqual("x = 'abc' \\\n    'next'\n",
                          pyformat.format_code(
-                             unicode('x = "abc" \\\n"next"\n')))
+                             'x = "abc" \\\n"next"\n'))
 
     def test_format_code_with_aggressive(self):
         self.assertEqual('True\n',
                          pyformat.format_code(
-                             unicode('import os\nTrue == True\n'),
+                             'import os\nTrue == True\n',
                              aggressive=True))
 
     def test_format_code_without_aggressive(self):
         self.assertEqual('import os\nTrue == True\n',
                          pyformat.format_code(
-                             unicode('import os\nTrue == True\n'),
+                             'import os\nTrue == True\n',
                              aggressive=False))
 
 
@@ -47,12 +43,12 @@ if True == True:
             pyformat.main(argv=['my_fake_program', filename],
                           standard_out=output_file,
                           standard_error=None)
-            self.assertEqual(unicode('''\
+            self.assertEqual('''\
 @@ -1,2 +1,2 @@
  if True == True:
 -    x = "abc"
 +    x = 'abc'
-'''), '\n'.join(output_file.getvalue().split('\n')[2:]))
+''', '\n'.join(output_file.getvalue().split('\n')[2:]))
 
     def test_diff_with_aggressive(self):
         with temporary_file('''\
@@ -63,13 +59,13 @@ if True == True:
             pyformat.main(argv=['my_fake_program', '--aggressive', filename],
                           standard_out=output_file,
                           standard_error=None)
-            self.assertEqual(unicode('''\
+            self.assertEqual('''\
 @@ -1,2 +1,2 @@
 -if True == True:
 -    x = "abc"
 +if True:
 +    x = 'abc'
-'''), '\n'.join(output_file.getvalue().split('\n')[2:]))
+''', '\n'.join(output_file.getvalue().split('\n')[2:]))
 
     def test_diff_with_empty_file(self):
         with temporary_file('') as filename:
