@@ -17,4 +17,4 @@ mutant:
 	@mut.py -t pyformat -u test_pyformat -mc
 
 readme:
-	@restview --long-description
+	@restview --long-description --strict
