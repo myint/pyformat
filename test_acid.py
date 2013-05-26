@@ -187,8 +187,9 @@ def check(args):
                     if not run(os.path.join(name), verbose=args.verbose,
                                options=options):
                         return False
-            except (UnicodeDecodeError, UnicodeEncodeError):
+            except (UnicodeDecodeError, UnicodeEncodeError) as exception:
                 # Ignore annoying codec problems on Python 2.
+                print(exception)
                 continue
     except TimeoutException:
         sys.stderr.write('Timed out\n')
