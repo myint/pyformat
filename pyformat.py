@@ -52,7 +52,7 @@ def formatters(aggressive):
         autopep8_options = None
 
     yield lambda code: autopep8.fix_string(code, options=autopep8_options)
-    yield lambda code: docformatter.format_code(code, summary_wrap_length=79)
+    yield docformatter.format_code
     yield unify.format_code
 
 
