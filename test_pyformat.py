@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 """Test suite for pyformat."""
 
@@ -30,6 +31,11 @@ class TestUnits(unittest.TestCase):
                          pyformat.format_code(
                              'import os\nTrue == True\n',
                              aggressive=False))
+
+    def test_format_code_with_unicode(self):
+        self.assertEqual("x = 'abc' \\\n    'ö'\n",
+                         pyformat.format_code(
+                             'x = "abc" \\\n"ö"\n'))
 
 
 class TestSystem(unittest.TestCase):

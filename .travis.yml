@@ -17,6 +17,7 @@ before_script:
     - sudo ln -s /run/shm /dev/shm
 
 install:
+    - pip install --quiet git+https://github.com/hhatto/autopep8
     - python setup.py --quiet install
     - pip install --quiet coverage
 
