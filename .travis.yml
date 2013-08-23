@@ -5,6 +5,11 @@ python:
     - "3.2"
     - "3.3"
 
+env:
+    -
+    - PYTHONIOENCODING=ascii
+    - PYTHONIOENCODING=utf-8
+
 before_script:
     # This is needed for Python multiprocessing.
     # https://github.com/travis-ci/travis-cookbooks/issues/155
