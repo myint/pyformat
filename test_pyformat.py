@@ -80,6 +80,26 @@ x = "abc"
                           standard_error=None)
             self.assertEqual('', output_file.getvalue())
 
+    def test_diff_with_encoding_declaration(self):
+        with temporary_file("""\
+# coding: utf-8
+import re
+import os
+import my_own_module
+x = 1
+""") as filename:
+            output_file = io.StringIO()
+            pyformat.main(argv=['my_fake_program', '--aggressive', filename],
+                          standard_out=output_file,
+                          standard_error=None)
+            self.assertEqual("""\
+ # coding: utf-8
+-import re
+-import os
+ import my_own_module
+ x = 1
+""", '\n'.join(output_file.getvalue().split('\n')[3:]))
+
     def test_diff_with_nonexistent_file(self):
         output_file = io.StringIO()
         pyformat.main(argv=['my_fake_program', 'nonexistent_file'],

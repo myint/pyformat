@@ -42,10 +42,10 @@ except NameError:
     unicode = str
 
 
-def formatters(aggressive):
+def formatters(aggressive, encoding=None):
     """Return list of code formatters."""
     if aggressive:
-        yield autoflake.fix_code
+        yield lambda source: autoflake.fix_code(source, encoding=encoding)
 
         autopep8_options = autopep8.parse_args(['', '--aggressive'])[0]
     else:
@@ -56,11 +56,11 @@ def formatters(aggressive):
     yield unify.format_code
 
 
-def format_code(source, aggressive=False):
+def format_code(source, aggressive=False, encoding=None):
     """Return formatted source code."""
     formatted_source = source
 
-    for fix in formatters(aggressive):
+    for fix in formatters(aggressive, encoding=encoding):
         formatted_source = fix(formatted_source)
 
     return formatted_source
@@ -76,7 +76,9 @@ def format_file(filename, args, standard_out):
     if not source:
         return
 
-    formatted_source = format_code(source, aggressive=args.aggressive)
+    formatted_source = format_code(source,
+                                   aggressive=args.aggressive,
+                                   encoding=encoding)
 
     if source != formatted_source:
         if args.in_place:
