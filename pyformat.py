@@ -33,7 +33,7 @@ import docformatter
 import unify
 
 
-__version__ = '0.4'
+__version__ = '0.5'
 
 
 try:
@@ -42,10 +42,10 @@ except NameError:
     unicode = str
 
 
-def formatters(aggressive, encoding=None):
+def formatters(aggressive):
     """Return list of code formatters."""
     if aggressive:
-        yield lambda source: autoflake.fix_code(source, encoding=encoding)
+        yield autoflake.fix_code
 
         autopep8_options = autopep8.parse_args(['', '--aggressive'])[0]
     else:
@@ -56,11 +56,11 @@ def formatters(aggressive, encoding=None):
     yield unify.format_code
 
 
-def format_code(source, aggressive=False, encoding=None):
+def format_code(source, aggressive=False):
     """Return formatted source code."""
     formatted_source = source
 
-    for fix in formatters(aggressive, encoding=encoding):
+    for fix in formatters(aggressive):
         formatted_source = fix(formatted_source)
 
     return formatted_source
@@ -77,8 +77,7 @@ def format_file(filename, args, standard_out):
         return
 
     formatted_source = format_code(source,
-                                   aggressive=args.aggressive,
-                                   encoding=encoding)
+                                   aggressive=args.aggressive)
 
     if source != formatted_source:
         if args.in_place:
