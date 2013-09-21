@@ -190,7 +190,8 @@ if True:
                 output_file = io.StringIO()
                 pyformat.main(argv=['my_fake_program',
                                     '--recursive',
-                                    '--exclude=zap,x*oo*',
+                                    '--exclude=zap',
+                                    '--exclude=x*oo*',
                                     directory],
                               standard_out=output_file,
                               standard_error=None)
@@ -211,7 +212,8 @@ if True:
                 output_file = io.StringIO()
                 pyformat.main(argv=['my_fake_program',
                                     '--recursive',
-                                    '--exclude=zap,*oo*',
+                                    '--exclude=zap',
+                                    '--exclude=*oo*',
                                     directory],
                               standard_out=output_file,
                               standard_error=None)

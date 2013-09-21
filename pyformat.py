@@ -114,7 +114,8 @@ def format_multiple_files(filenames, args, standard_out, standard_error):
 
     """
     filenames = autopep8.find_files(list(filenames),
-                                    args.recursive, args.exclude)
+                                    args.recursive,
+                                    args.exclude_patterns)
     if args.jobs > 1:
         import multiprocessing
         pool = multiprocessing.Pool(args.jobs)
@@ -142,20 +143,17 @@ def parse_args(argv):
                              'match CPU count if value is less than 1')
     parser.add_argument('-v', '--verbose', action='store_true',
                         help='print verbose messages')
-    parser.add_argument('--exclude', metavar='globs',
-                        help='exclude files/directories that match these '
-                             'comma-separated globs')
+    parser.add_argument('--exclude', action='append',
+                        dest='exclude_patterns', default=[], metavar='pattern',
+                        help='exclude files this pattern; '
+                             'specify this multiple times for multiple '
+                             'patterns')
     parser.add_argument('--version', action='version',
                         version='%(prog)s ' + __version__)
     parser.add_argument('files', nargs='+',
                         help='files to format')
 
     args = parser.parse_args(argv[1:])
-
-    if args.exclude:
-        args.exclude = args.exclude.split(',')
-    else:
-        args.exclude = []
 
     if args.jobs < 1:
         import multiprocessing
