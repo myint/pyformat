@@ -3,8 +3,7 @@ check:
 	pep257 pyformat pyformat.py setup.py
 	pylint \
 		--reports=no \
-		--msg-template='{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}' \
-		--disable=C0103,E1101,F0401,R0914,W0404,W0622 \
+		--disable=invalid-name \
 		--rcfile=/dev/null \
 		pyformat.py setup.py
 	check-manifest --ignore=.travis.yml,Makefile,test_acid.py,tox.ini
