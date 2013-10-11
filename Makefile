@@ -13,7 +13,8 @@ check:
 coverage:
 	@coverage erase
 	@PYFORMAT_COVERAGE=1 coverage run \
-		--branch --parallel-mode --omit='*/site-packages/*' \
+		--branch --parallel-mode \
+		--omit='*/distutils/*,*/site-packages/*' \
 		test_pyformat.py
 	@coverage combine
 	@coverage report
