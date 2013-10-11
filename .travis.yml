@@ -22,6 +22,7 @@ install:
 script:
     - python test_pyformat.py
     - pyformat pyformat.py
+    - python test_acid.py setup.py
 
 after_success:
     - pip install --quiet coverage

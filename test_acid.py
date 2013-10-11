@@ -10,7 +10,7 @@ import subprocess
 
 
 ROOT_PATH = os.path.abspath(os.path.dirname(__file__))
-PYFORMAT_BIN = os.path.join(ROOT_PATH, 'pyformat')
+PYFORMAT_BIN = os.path.join(ROOT_PATH, 'pyformat.py')
 
 import autopep8
 
