@@ -24,7 +24,7 @@ if (
     int(os.environ['PYFORMAT_COVERAGE'])
 ):
     PYFORMAT_COMMAND = ['coverage', 'run', '--branch', '--parallel',
-                        '--omit=*/site-packages/*',
+                        '--omit=*/distutils/*,*/site-packages/*',
                         os.path.join(ROOT_DIRECTORY, 'pyformat.py')]
 else:
     # We need to specify the executable to make sure the correct Python
