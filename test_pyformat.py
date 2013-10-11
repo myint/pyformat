@@ -7,12 +7,32 @@ from __future__ import unicode_literals
 
 import contextlib
 import io
+import os
 import subprocess
 import sys
 import tempfile
 import unittest
 
 import pyformat
+
+
+ROOT_DIRECTORY = os.path.abspath(os.path.dirname(__file__))
+
+
+if (
+    'PYFORMAT_COVERAGE' in os.environ and
+    int(os.environ['PYFORMAT_COVERAGE'])
+):
+    PYFORMAT_COMMAND = ['coverage', 'run', '--branch', '--parallel',
+                        '--omit=*/site-packages/*',
+                        os.path.join(ROOT_DIRECTORY, 'pyformat.py')]
+else:
+    # We need to specify the executable to make sure the correct Python
+    # interpreter gets used.
+    PYFORMAT_COMMAND = [sys.executable,
+                        os.path.join(
+                            ROOT_DIRECTORY,
+                            'pyformat.py')]  # pragma: no cover
 
 
 class TestUnits(unittest.TestCase):
@@ -228,9 +248,7 @@ if True:
 import os
 x = "abc"
 """) as filename:
-            process = subprocess.Popen([sys.executable,
-                                        './pyformat.py',
-                                        filename],
+            process = subprocess.Popen(PYFORMAT_COMMAND + [filename],
                                        stdout=subprocess.PIPE)
             self.assertEqual("""\
  import os

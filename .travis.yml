@@ -18,14 +18,14 @@ before_script:
 
 install:
     - python setup.py --quiet install
-    - pip install --quiet coverage
 
 script:
     - python test_pyformat.py
     - pyformat pyformat.py
-    - coverage run --branch --omit='*/site-packages/*,*/distutils/*' test_pyformat.py
-    - coverage report --show-missing
 
 after_success:
+    - pip install --quiet coverage
+    - make coverage
+
     - pip install --quiet coveralls
     - coveralls

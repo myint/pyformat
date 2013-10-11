@@ -11,11 +11,15 @@ check:
 	scspell pyformat.py setup.py test_pyformat.py README.rst
 
 coverage:
-	@rm -f .coverage
-	@coverage run test_pyformat.py
+	@coverage erase
+	@PYFORMAT_COVERAGE=1 coverage run \
+		--branch --parallel-mode --omit='*/site-packages/*' \
+		test_pyformat.py
+	@coverage combine
 	@coverage report
+
+open_coverage: coverage
 	@coverage html
-	@rm -f .coverage
 	@python -m webbrowser -n "file://${PWD}/htmlcov/index.html"
 
 mutant:

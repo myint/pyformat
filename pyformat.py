@@ -192,7 +192,7 @@ def main():
         return _main(sys.argv,
                      standard_out=sys.stdout,
                      standard_error=sys.stderr)
-    except KeyboardInterrupt:
+    except KeyboardInterrupt:  # pragma: no cover
         return 2  # pragma: no cover
 
 
