@@ -6,7 +6,7 @@ check:
 		--disable=invalid-name \
 		--rcfile=/dev/null \
 		pyformat.py setup.py
-	check-manifest --ignore=.travis.yml,Makefile,test_acid.py,tox.ini
+	check-manifest
 	python setup.py --long-description | rst2html --strict > /dev/null
 	scspell pyformat pyformat.py setup.py test_pyformat.py README.rst
 

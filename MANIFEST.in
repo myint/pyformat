@@ -1,2 +1,6 @@
 include README.rst
 include test_pyformat.py
+
+exclude .travis.yml
+exclude Makefile
+exclude test_acid.py
