@@ -38,5 +38,6 @@ with open('README.rst') as readme:
                             'autopep8>=0.9.4',
                             'docformatter>=0.5.6',
                             'unify>=0.2'],
-          scripts=['pyformat'],
+          entry_points={
+              'console_scripts': ['pyformat = pyformat:main']},
           test_suite='test_pyformat')

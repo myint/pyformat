@@ -25,6 +25,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import io
+import signal
 import sys
 
 import autoflake
@@ -33,7 +34,7 @@ import docformatter
 import unify
 
 
-__version__ = '0.5'
+__version__ = '0.5.1a0'
 
 
 try:
@@ -162,8 +163,8 @@ def parse_args(argv):
     return args
 
 
-def main(argv, standard_out, standard_error):
-    """Main entry point.
+def _main(argv, standard_out, standard_error):
+    """Internal main entry point.
 
     Return exit status. 0 means no error.
 
@@ -176,3 +177,24 @@ def main(argv, standard_out, standard_error):
         return 1
 
     format_multiple_files(set(args.files), args, standard_out, standard_error)
+
+
+def main():
+    """Main entry point."""
+    try:
+        # Exit on broken pipe.
+        signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+    except AttributeError:  # pragma: no cover
+        # SIGPIPE is not available on Windows.
+        pass
+
+    try:
+        return _main(sys.argv,
+                     standard_out=sys.stdout,
+                     standard_error=sys.stderr)
+    except KeyboardInterrupt:
+        return 2  # pragma: no cover
+
+
+if __name__ == '__main__':
+    sys.exit(main())

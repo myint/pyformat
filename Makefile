@@ -1,6 +1,6 @@
 check:
-	pep8 pyformat pyformat.py setup.py
-	pep257 pyformat pyformat.py setup.py
+	pep8 pyformat.py setup.py
+	pep257 pyformat.py setup.py
 	pylint \
 		--reports=no \
 		--disable=invalid-name \
@@ -8,7 +8,7 @@ check:
 		pyformat.py setup.py
 	check-manifest
 	python setup.py --long-description | rst2html --strict > /dev/null
-	scspell pyformat pyformat.py setup.py test_pyformat.py README.rst
+	scspell pyformat.py setup.py test_pyformat.py README.rst
 
 coverage:
 	@rm -f .coverage

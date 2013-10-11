@@ -7,6 +7,8 @@ from __future__ import unicode_literals
 
 import contextlib
 import io
+import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -46,9 +48,9 @@ import os
 x = "abc"
 ''') as filename:
             output_file = io.StringIO()
-            pyformat.main(argv=['my_fake_program', filename],
-                          standard_out=output_file,
-                          standard_error=None)
+            pyformat._main(argv=['my_fake_program', filename],
+                           standard_out=output_file,
+                           standard_error=None)
             self.assertEqual('''\
 @@ -1,2 +1,2 @@
  import os
@@ -62,9 +64,9 @@ import os
 x = "abc"
 ''') as filename:
             output_file = io.StringIO()
-            pyformat.main(argv=['my_fake_program', '--aggressive', filename],
-                          standard_out=output_file,
-                          standard_error=None)
+            pyformat._main(argv=['my_fake_program', '--aggressive', filename],
+                           standard_out=output_file,
+                           standard_error=None)
             self.assertEqual('''\
 @@ -1,2 +1 @@
 -import os
@@ -75,9 +77,9 @@ x = "abc"
     def test_diff_with_empty_file(self):
         with temporary_file('') as filename:
             output_file = io.StringIO()
-            pyformat.main(argv=['my_fake_program', filename],
-                          standard_out=output_file,
-                          standard_error=None)
+            pyformat._main(argv=['my_fake_program', filename],
+                           standard_out=output_file,
+                           standard_error=None)
             self.assertEqual('', output_file.getvalue())
 
     def test_diff_with_encoding_declaration(self):
@@ -89,9 +91,9 @@ import my_own_module
 x = 1
 """) as filename:
             output_file = io.StringIO()
-            pyformat.main(argv=['my_fake_program', '--aggressive', filename],
-                          standard_out=output_file,
-                          standard_error=None)
+            pyformat._main(argv=['my_fake_program', '--aggressive', filename],
+                           standard_out=output_file,
+                           standard_error=None)
             self.assertEqual("""\
  # coding: utf-8
 -import re
@@ -102,16 +104,16 @@ x = 1
 
     def test_diff_with_nonexistent_file(self):
         output_file = io.StringIO()
-        pyformat.main(argv=['my_fake_program', 'nonexistent_file'],
-                      standard_out=output_file,
-                      standard_error=output_file)
+        pyformat._main(argv=['my_fake_program', 'nonexistent_file'],
+                       standard_out=output_file,
+                       standard_error=output_file)
         self.assertIn('no such file', output_file.getvalue().lower())
 
     def test_verbose(self):
         output_file = io.StringIO()
-        pyformat.main(argv=['my_fake_program', '--verbose', __file__],
-                      standard_out=output_file,
-                      standard_error=output_file)
+        pyformat._main(argv=['my_fake_program', '--verbose', __file__],
+                       standard_out=output_file,
+                       standard_error=output_file)
         self.assertIn('.py', output_file.getvalue())
 
     def test_in_place(self):
@@ -120,9 +122,9 @@ if True:
     x = "abc"
 ''') as filename:
             output_file = io.StringIO()
-            pyformat.main(argv=['my_fake_program', '--in-place', filename],
-                          standard_out=output_file,
-                          standard_error=None)
+            pyformat._main(argv=['my_fake_program', '--in-place', filename],
+                           standard_out=output_file,
+                           standard_error=None)
             with open(filename) as f:
                 self.assertEqual('''\
 if True:
@@ -135,10 +137,10 @@ if True:
     x = "abc"
 ''') as filename:
             output_file = io.StringIO()
-            pyformat.main(argv=['my_fake_program', '--in-place',
-                                '--jobs=2', filename],
-                          standard_out=output_file,
-                          standard_error=None)
+            pyformat._main(argv=['my_fake_program', '--in-place',
+                                 '--jobs=2', filename],
+                           standard_out=output_file,
+                           standard_error=None)
             with open(filename) as f:
                 self.assertEqual('''\
 if True:
@@ -147,10 +149,10 @@ if True:
 
     def test_multiple_jobs_should_require_in_place(self):
         output_file = io.StringIO()
-        pyformat.main(argv=['my_fake_program',
-                            '--jobs=2', __file__],
-                      standard_out=output_file,
-                      standard_error=output_file)
+        pyformat._main(argv=['my_fake_program',
+                             '--jobs=2', __file__],
+                       standard_out=output_file,
+                       standard_error=output_file)
 
         self.assertIn('requires --in-place', output_file.getvalue())
 
@@ -171,11 +173,11 @@ if True:
 """, directory=inner_directory):
 
                     output_file = io.StringIO()
-                    pyformat.main(argv=['my_fake_program',
-                                        '--recursive',
-                                        directory],
-                                  standard_out=output_file,
-                                  standard_error=None)
+                    pyformat._main(argv=['my_fake_program',
+                                         '--recursive',
+                                         directory],
+                                   standard_out=output_file,
+                                   standard_error=None)
                     self.assertEqual(
                         '',
                         output_file.getvalue().strip())
@@ -188,13 +190,13 @@ if True:
 """, prefix='food', directory=directory):
 
                 output_file = io.StringIO()
-                pyformat.main(argv=['my_fake_program',
-                                    '--recursive',
-                                    '--exclude=zap',
-                                    '--exclude=x*oo*',
-                                    directory],
-                              standard_out=output_file,
-                              standard_error=None)
+                pyformat._main(argv=['my_fake_program',
+                                     '--recursive',
+                                     '--exclude=zap',
+                                     '--exclude=x*oo*',
+                                     directory],
+                               standard_out=output_file,
+                               standard_error=None)
                 self.assertEqual("""\
 @@ -1,2 +1,2 @@
  if True:
@@ -210,16 +212,31 @@ if True:
 """, prefix='food', directory=directory):
 
                 output_file = io.StringIO()
-                pyformat.main(argv=['my_fake_program',
-                                    '--recursive',
-                                    '--exclude=zap',
-                                    '--exclude=*oo*',
-                                    directory],
-                              standard_out=output_file,
-                              standard_error=None)
+                pyformat._main(argv=['my_fake_program',
+                                     '--recursive',
+                                     '--exclude=zap',
+                                     '--exclude=*oo*',
+                                     directory],
+                               standard_out=output_file,
+                               standard_error=None)
                 self.assertEqual(
                     '',
                     output_file.getvalue().strip())
+
+    def test_end_to_end(self):
+        with temporary_file("""\
+import os
+x = "abc"
+""") as filename:
+            process = subprocess.Popen([sys.executable,
+                                        './pyformat.py',
+                                        filename],
+                                       stdout=subprocess.PIPE)
+            self.assertEqual("""\
+ import os
+-x = "abc"
++x = 'abc'
+""", '\n'.join(process.communicate()[0].decode('utf-8').split('\n')[3:]))
 
 
 @contextlib.contextmanager
