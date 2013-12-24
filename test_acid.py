@@ -111,13 +111,6 @@ def process_args():
     import argparse
     parser = argparse.ArgumentParser()
 
-    parser.add_argument(
-        '--timeout',
-        help='stop testing additional files after this amount of time '
-             '(default: %(default)s)',
-        default=-1,
-        type=float)
-
     parser.add_argument('--aggressive', action='store_true',
                         help='pass to the pyformat "--aggressive" option')
 
@@ -127,15 +120,6 @@ def process_args():
     parser.add_argument('files', nargs='*', help='files to format')
 
     return parser.parse_args()
-
-
-class TimeoutException(Exception):
-
-    """Timeout exception."""
-
-
-def timeout(_, __):
-    raise TimeoutException()
 
 
 def check(args):
@@ -157,52 +141,41 @@ def check(args):
     filenames = dir_paths
     completed_filenames = set()
 
-    try:
-        import signal
-        if args.timeout > 0:
-            signal.signal(signal.SIGALRM, timeout)
-            signal.alarm(int(args.timeout))
-
-        while filenames:
-            try:
-                name = os.path.realpath(filenames.pop(0))
-                if not os.path.exists(name):
-                    # Invalid symlink.
-                    continue
-
-                if name in completed_filenames:
-                    sys.stderr.write(
-                        colored(
-                            '--->  Skipping previously tested ' + name + '\n',
-                            YELLOW))
-                    continue
-                else:
-                    completed_filenames.update(name)
-
-                if os.path.isdir(name):
-                    for root, directories, children in os.walk(unicode(name)):
-                        filenames += [os.path.join(root, f) for f in children
-                                      if f.endswith('.py') and
-                                      not f.startswith('.')]
-
-                        directories[:] = [d for d in directories
-                                          if not d.startswith('.')]
-                else:
-                    verbose_message = '--->  Testing with ' + name
-                    sys.stderr.write(colored(verbose_message + '\n', YELLOW))
-
-                    if not run(os.path.join(name), verbose=args.verbose,
-                               options=options):
-                        return False
-            except (UnicodeDecodeError, UnicodeEncodeError) as exception:
-                # Ignore annoying codec problems on Python 2.
-                print(exception, file=sys.stderr)
+    while filenames:
+        try:
+            name = os.path.realpath(filenames.pop(0))
+            if not os.path.exists(name):
+                # Invalid symlink.
                 continue
-    except TimeoutException:
-        sys.stderr.write('Timed out\n')
-    finally:
-        if args.timeout > 0:
-            signal.alarm(0)
+
+            if name in completed_filenames:
+                sys.stderr.write(
+                    colored(
+                        '--->  Skipping previously tested ' + name + '\n',
+                        YELLOW))
+                continue
+            else:
+                completed_filenames.update(name)
+
+            if os.path.isdir(name):
+                for root, directories, children in os.walk(unicode(name)):
+                    filenames += [os.path.join(root, f) for f in children
+                                  if f.endswith('.py') and
+                                  not f.startswith('.')]
+
+                    directories[:] = [d for d in directories
+                                      if not d.startswith('.')]
+            else:
+                verbose_message = '--->  Testing with ' + name
+                sys.stderr.write(colored(verbose_message + '\n', YELLOW))
+
+                if not run(os.path.join(name), verbose=args.verbose,
+                           options=options):
+                    return False
+        except (UnicodeDecodeError, UnicodeEncodeError) as exception:
+            # Ignore annoying codec problems on Python 2.
+            print(exception, file=sys.stderr)
+            continue
 
     return True
 
