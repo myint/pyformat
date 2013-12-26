@@ -49,8 +49,8 @@ def formatters(aggressive):
     """Return list of code formatters."""
     if aggressive:
         yield autoflake.fix_code
-
-        autopep8_options = autopep8.parse_args(['', '--aggressive'])
+        autopep8_options = autopep8.parse_args(
+            [''] + int(aggressive) * ['--aggressive'])
         try:
             # For old autopep8. Remove this once autopep8 1.0 is released.
             autopep8_options = autopep8_options[0]
@@ -144,7 +144,7 @@ def parse_args(argv):
                         help='make changes to files instead of printing diffs')
     parser.add_argument('-r', '--recursive', action='store_true',
                         help='drill down directories recursively')
-    parser.add_argument('-a', '--aggressive', action='store_true',
+    parser.add_argument('-a', '--aggressive', action='count', default=0,
                         help='use more aggressive formatters')
     parser.add_argument('-j', '--jobs', type=int, metavar='n', default=1,
                         help='number of parallel jobs; '
