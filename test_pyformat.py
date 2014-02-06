@@ -248,13 +248,12 @@ if True:
 import os
 x = "abc"
 """) as filename:
-            process = subprocess.Popen(PYFORMAT_COMMAND + [filename],
-                                       stdout=subprocess.PIPE)
+            output = subprocess.check_output(PYFORMAT_COMMAND + [filename])
             self.assertEqual("""\
  import os
 -x = "abc"
 +x = 'abc'
-""", '\n'.join(process.communicate()[0].decode('utf-8').split('\n')[3:]))
+""", '\n'.join(output.decode('utf-8').split('\n')[3:]))
 
 
 @contextlib.contextmanager
