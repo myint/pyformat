@@ -7,7 +7,7 @@ check:
 		--rcfile=/dev/null \
 		pyformat.py setup.py
 	check-manifest
-	python setup.py --long-description | rst2html --strict > /dev/null
+	rstcheck --report=1 README.rst
 	scspell pyformat.py setup.py test_pyformat.py README.rst
 
 coverage:
