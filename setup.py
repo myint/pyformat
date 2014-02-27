@@ -37,8 +37,8 @@ with open('README.rst') as readme:
           py_modules=['pyformat'],
           zip_safe=False,
           install_requires=['autoflake>=0.6.1',
-                            'autopep8>=0.9.7',
-                            'docformatter>=0.5.6',
+                            'autopep8>=1.0',
+                            'docformatter>=0.5.7',
                             'unify>=0.2'],
           entry_points={
               'console_scripts': ['pyformat = pyformat:main']},
