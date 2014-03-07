@@ -253,7 +253,7 @@ x = "abc"
  import os
 -x = "abc"
 +x = 'abc'
-""", '\n'.join(output.decode('utf-8').split('\n')[3:]))
+""", '\n'.join(output.decode().split('\n')[3:]))
 
 
 @contextlib.contextmanager
@@ -262,7 +262,7 @@ def temporary_file(contents, directory='.', prefix=''):
     f = tempfile.NamedTemporaryFile(suffix='.py', prefix=prefix,
                                     delete=False, dir=directory)
     try:
-        f.write(contents.encode('utf8'))
+        f.write(contents.encode())
         f.close()
         yield f.name
     finally:
