@@ -6,10 +6,6 @@ pyformat
     :target: https://travis-ci.org/myint/pyformat
     :alt: Build status
 
-.. image:: https://coveralls.io/repos/myint/pyformat/badge.svg?branch=master
-    :target: https://coveralls.io/r/myint/pyformat
-    :alt: Test coverage status
-
 *pyformat* formats Python code to follow a consistent style.
 
 
