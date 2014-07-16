@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (C) 2013 Steven Myint
+# Copyright (C) 2013-2014 Steven Myint
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -36,7 +36,7 @@ import docformatter
 import unify
 
 
-__version__ = '0.5.5'
+__version__ = '0.5.6'
 
 
 try:
