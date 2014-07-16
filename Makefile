@@ -3,7 +3,10 @@ check:
 	pep257 pyformat.py setup.py
 	pylint \
 		--reports=no \
+		--disable=bad-continuation \
 		--disable=invalid-name \
+		--disable=no-member \
+		--disable=not-callable \
 		--rcfile=/dev/null \
 		pyformat.py setup.py
 	check-manifest
