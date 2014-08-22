@@ -124,6 +124,8 @@ def _format_file(parameters):
     except IOError as exception:
         print(unicode(exception), file=standard_error)
         return False
+    except KeyboardInterrupt:  # pragma: no cover
+        return False  # pragma: no cover
 
     if args.verbose:
         print('changed' if changed else 'unchanged', file=standard_error)
@@ -143,10 +145,11 @@ def format_multiple_files(filenames, args, standard_out, standard_error):
     if args.jobs > 1:
         import multiprocessing
         pool = multiprocessing.Pool(args.jobs)
-        result = pool.map(
-            _format_file,
-            [(name, args, None, None)  # multiprocessing cannot serialize io.
-             for name in filenames])
+
+        # We pass neither standard_out nor standard_error into "_format_file()"
+        # since multiprocessing cannot serialize io.
+        result = pool.map(_format_file,
+                          [(name, args, None, None) for name in filenames])
     else:
         result = [_format_file((name, args, standard_out, standard_error))
                   for name in filenames]
