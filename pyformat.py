@@ -38,7 +38,7 @@ import docformatter
 import unify
 
 
-__version__ = '0.5.6'
+__version__ = '0.5.7a0'
 
 
 try:
@@ -77,14 +77,18 @@ def format_code(source, aggressive=False):
 
 
 def format_file(filename, args, standard_out):
-    """Run format_code() on a file."""
+    """Run format_code() on a file.
+
+    Return True if the new formatting differs from the original.
+
+    """
     encoding = autopep8.detect_encoding(filename)
     with autopep8.open_with_encoding(filename,
                                      encoding=encoding) as input_file:
         source = input_file.read()
 
     if not source:
-        return
+        return False
 
     formatted_source = format_code(source,
                                    aggressive=args.aggressive)
@@ -101,6 +105,10 @@ def format_file(filename, args, standard_out):
                 filename)
             standard_out.write(''.join(diff))
 
+        return True
+
+    return False
+
 
 def _format_file(parameters):
     """Helper function for optionally running format_file() in parallel."""
@@ -109,12 +117,18 @@ def _format_file(parameters):
     standard_error = standard_error or sys.stderr
 
     if args.verbose:
-        print('[file:{0}]'.format(filename),
-              file=standard_error)
+        print('{0}: '.format(filename), end='', file=standard_error)
+
     try:
-        format_file(*parameters[:-1])
+        changed = format_file(*parameters[:-1])
     except IOError as exception:
         print(unicode(exception), file=standard_error)
+        return False
+
+    if args.verbose:
+        print('changed' if changed else 'unchanged', file=standard_error)
+
+    return changed
 
 
 def format_multiple_files(filenames, args, standard_out, standard_error):
@@ -129,13 +143,15 @@ def format_multiple_files(filenames, args, standard_out, standard_error):
     if args.jobs > 1:
         import multiprocessing
         pool = multiprocessing.Pool(args.jobs)
-        pool.map(_format_file,
-                 [(name, args,
-                   None, None)  # multiprocessing cannot serialize io.
-                  for name in filenames])
+        result = pool.map(
+            _format_file,
+            [(name, args, None, None)  # multiprocessing cannot serialize io.
+             for name in filenames])
     else:
-        for name in filenames:
-            _format_file((name, args, standard_out, standard_error))
+        result = [_format_file((name, args, standard_out, standard_error))
+                  for name in filenames]
+
+    return any(result)
 
 
 def parse_args(argv):

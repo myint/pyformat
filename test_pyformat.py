@@ -59,6 +59,65 @@ class TestUnits(unittest.TestCase):
                          pyformat.format_code(
                              'x = "abc" \\\n"ö"\n'))
 
+    def test_format_multiple_files(self):
+        with temporary_file('''\
+if True:
+    x = "abc"
+''') as filename:
+            output_file = io.StringIO()
+
+            result = pyformat.format_multiple_files(
+                [filename],
+                pyformat.parse_args(['my_fake_program', '--in-place', '']),
+                standard_out=output_file,
+                standard_error=None)
+
+            self.assertTrue(result)
+
+            with open(filename) as f:
+                self.assertEqual('''\
+if True:
+    x = 'abc'
+''', f.read())
+
+    def test_format_multiple_files_should_return_false_on_no_change(self):
+        with temporary_file('''\
+if True:
+    x = 'abc'
+''') as filename:
+            output_file = io.StringIO()
+
+            result = pyformat.format_multiple_files(
+                [filename],
+                pyformat.parse_args(['my_fake_program', '--in-place', '']),
+                standard_out=output_file,
+                standard_error=None)
+
+            self.assertFalse(result)
+
+    def test_format_multiple_files_with_nonexistent_file(self):
+        output_file = io.StringIO()
+
+        result = pyformat.format_multiple_files(
+            ['nonexistent_file'],
+            pyformat.parse_args(['my_fake_program', '--in-place', '']),
+            standard_out=output_file,
+            standard_error=output_file)
+
+        self.assertFalse(result)
+
+    def test_format_multiple_files_with_nonexistent_file_and_verbose(self):
+        output_file = io.StringIO()
+
+        result = pyformat.format_multiple_files(
+            ['nonexistent_file'],
+            pyformat.parse_args(['my_fake_program',
+                                 '--in-place', '--verbose', '']),
+            standard_out=output_file,
+            standard_error=output_file)
+
+        self.assertFalse(result)
+
 
 class TestSystem(unittest.TestCase):
 
