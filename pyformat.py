@@ -38,7 +38,7 @@ import docformatter
 import unify
 
 
-__version__ = '0.5.7a0'
+__version__ = '0.5.7'
 
 
 try:
