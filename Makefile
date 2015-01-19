@@ -10,7 +10,7 @@ check:
 		--rcfile=/dev/null \
 		pyformat.py setup.py
 	check-manifest
-	rstcheck --report=1 README.rst
+	rstcheck README.rst
 	scspell pyformat.py setup.py test_pyformat.py README.rst
 
 coverage:
