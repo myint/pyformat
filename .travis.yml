@@ -11,6 +11,7 @@ env:
     - PYTHONIOENCODING=ascii
     - PYTHONIOENCODING=utf-8
     - PYTHONOPTIMIZE=x
+    - LANG=
 
 before_script:
     # This is needed for Python multiprocessing.
