@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 """Setup for pyformat."""
 
 import ast
