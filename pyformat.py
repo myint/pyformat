@@ -41,12 +41,6 @@ import unify
 __version__ = '0.5.7'
 
 
-try:
-    unicode
-except NameError:
-    unicode = str
-
-
 def formatters(aggressive):
     """Return list of code formatters."""
     if aggressive:
@@ -122,7 +116,7 @@ def _format_file(parameters):
     try:
         changed = format_file(*parameters[:-1])
     except IOError as exception:
-        print(unicode(exception), file=standard_error)
+        print('{}'.format(exception), file=standard_error)
         return False
     except KeyboardInterrupt:  # pragma: no cover
         return False  # pragma: no cover
