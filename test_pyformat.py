@@ -8,6 +8,7 @@ from __future__ import unicode_literals
 import contextlib
 import io
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -325,7 +326,6 @@ def temporary_file(contents, directory='.', prefix=''):
         f.close()
         yield f.name
     finally:
-        import os
         os.remove(f.name)
 
 
@@ -336,7 +336,6 @@ def temporary_directory(directory='.', prefix=''):
     try:
         yield temp_directory
     finally:
-        import shutil
         shutil.rmtree(temp_directory)
 
 
