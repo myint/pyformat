@@ -29,6 +29,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import io
+import lib2to3
 import signal
 import sys
 
@@ -36,6 +37,7 @@ import autoflake
 import autopep8
 import docformatter
 import unify
+import yapf
 
 
 __version__ = '0.5.7'
@@ -43,21 +45,29 @@ __version__ = '0.5.7'
 
 def formatters(aggressive):
     """Return list of code formatters."""
+    autopep8_options = autopep8.parse_args([''])
+
     if aggressive:
         yield autoflake.fix_code
-        autopep8_options = autopep8.parse_args(
-            [''] + int(aggressive) * ['--aggressive'])
-        try:
-            # For old autopep8. Remove this once autopep8 1.0 is released.
-            autopep8_options = autopep8_options[0]
-        except TypeError:  # pragma: no cover
-            pass
-    else:
-        autopep8_options = None
 
+        autopep8_options.aggressive = aggressive
+
+    yield format_with_yapf
     yield lambda code: autopep8.fix_code(code, options=autopep8_options)
     yield docformatter.format_code
     yield unify.format_code
+
+
+def format_with_yapf(code):
+    """Return formatted source code."""
+    try:
+        return yapf.yapflib.yapf_api.FormatCode(
+            code,
+            filename='',
+            style_config='pep8',
+            lines=None)
+    except (lib2to3.pgen2.parse.ParseError, SyntaxError):
+        return code
 
 
 def format_code(source, aggressive=False):

@@ -20,6 +20,7 @@ before_script:
     - sudo ln -s /run/shm /dev/shm
 
 install:
+    - pip install --quiet git+https://github.com/google/yapf
     - python setup.py --quiet install
 
 script:

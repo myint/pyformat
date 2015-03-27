@@ -39,7 +39,7 @@ else:
 class TestUnits(unittest.TestCase):
 
     def test_format_code(self):
-        self.assertEqual("x = 'abc' \\\n    'next'\n",
+        self.assertEqual("x = 'abc' 'next'\n",
                          pyformat.format_code(
                              'x = "abc" \\\n"next"\n'))
 
@@ -56,7 +56,7 @@ class TestUnits(unittest.TestCase):
                              aggressive=False))
 
     def test_format_code_with_unicode(self):
-        self.assertEqual("x = 'abc' \\\n    'ö'\n",
+        self.assertEqual("x = 'abc' 'ö'\n",
                          pyformat.format_code(
                              'x = "abc" \\\n"ö"\n'))
 
