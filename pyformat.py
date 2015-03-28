@@ -47,11 +47,6 @@ def formatters(aggressive):
         yield autoflake.fix_code
         autopep8_options = autopep8.parse_args(
             [''] + int(aggressive) * ['--aggressive'])
-        try:
-            # For old autopep8. Remove this once autopep8 1.0 is released.
-            autopep8_options = autopep8_options[0]
-        except TypeError:  # pragma: no cover
-            pass
     else:
         autopep8_options = None
 
