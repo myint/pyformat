@@ -1,3 +1,5 @@
+sudo: false
+
 language: python
 
 python:
@@ -12,12 +14,6 @@ env:
     - PYTHONIOENCODING=ascii
     - PYTHONIOENCODING=utf-8
     - PYTHONOPTIMIZE=x
-
-before_script:
-    # This is needed for Python multiprocessing.
-    # https://github.com/travis-ci/travis-cookbooks/issues/155
-    - sudo rm -rf /dev/shm
-    - sudo ln -s /run/shm /dev/shm
 
 install:
     - python setup.py --quiet install
