@@ -168,8 +168,7 @@ def parse_args(argv):
                              'patterns')
     parser.add_argument('--version', action='version',
                         version='%(prog)s ' + __version__)
-    parser.add_argument('files', nargs='+',
-                        help='files to format')
+    parser.add_argument('files', nargs='+', help='files to format')
 
     args = parser.parse_args(argv[1:])
 
