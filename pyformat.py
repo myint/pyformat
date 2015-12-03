@@ -46,9 +46,9 @@ def formatters(aggressive):
     if aggressive:
         yield autoflake.fix_code
         autopep8_options = autopep8.parse_args(
-            [''] + int(aggressive) * ['--aggressive'])
+            [''] + int(aggressive) * ['--aggressive'], apply_config=True)
     else:
-        autopep8_options = None
+        autopep8_options = autopep8.parse_args([''], apply_config=True)
 
     yield lambda code: autopep8.fix_code(code, options=autopep8_options)
     yield docformatter.format_code
