@@ -41,25 +41,25 @@ import unify
 __version__ = '0.6'
 
 
-def formatters(aggressive):
+def formatters(aggressive, apply_config):
     """Return list of code formatters."""
     if aggressive:
         yield autoflake.fix_code
         autopep8_options = autopep8.parse_args(
-            [''] + int(aggressive) * ['--aggressive'], apply_config=True)
+            [''] + int(aggressive) * ['--aggressive'], apply_config=apply_config)
     else:
-        autopep8_options = autopep8.parse_args([''], apply_config=True)
+        autopep8_options = autopep8.parse_args([''], apply_config=apply_config)
 
     yield lambda code: autopep8.fix_code(code, options=autopep8_options)
     yield docformatter.format_code
     yield unify.format_code
 
 
-def format_code(source, aggressive=False):
+def format_code(source, aggressive=False, apply_config=False):
     """Return formatted source code."""
     formatted_source = source
 
-    for fix in formatters(aggressive):
+    for fix in formatters(aggressive, apply_config):
         formatted_source = fix(formatted_source)
 
     return formatted_source
@@ -80,7 +80,8 @@ def format_file(filename, args, standard_out):
         return False
 
     formatted_source = format_code(source,
-                                   aggressive=args.aggressive)
+                                   aggressive=args.aggressive,
+                                   apply_config=not args.no_config)
 
     if source != formatted_source:
         if args.in_place:
@@ -166,6 +167,10 @@ def parse_args(argv):
                         help='exclude files this pattern; '
                              'specify this multiple times for multiple '
                              'patterns')
+    parser.add_argument('--no-config', action='store_true',
+                        help="don't look for and apply local config files; "
+                        'if not passed, defaults are updated with any '
+                        "config files in the project's root dir")
     parser.add_argument('--version', action='version',
                         version='%(prog)s ' + __version__)
     parser.add_argument('files', nargs='+', help='files to format')
