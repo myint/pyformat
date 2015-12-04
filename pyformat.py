@@ -46,7 +46,8 @@ def formatters(aggressive, apply_config):
     if aggressive:
         yield autoflake.fix_code
         autopep8_options = autopep8.parse_args(
-            [''] + int(aggressive) * ['--aggressive'], apply_config=apply_config)
+            [''] + int(aggressive) * ['--aggressive'],
+            apply_config=apply_config)
     else:
         autopep8_options = autopep8.parse_args([''], apply_config=apply_config)
 
@@ -81,7 +82,7 @@ def format_file(filename, args, standard_out):
 
     formatted_source = format_code(source,
                                    aggressive=args.aggressive,
-                                   apply_config=not args.no_config)
+                                   apply_config=args.config)
 
     if source != formatted_source:
         if args.in_place:
@@ -167,10 +168,11 @@ def parse_args(argv):
                         help='exclude files this pattern; '
                              'specify this multiple times for multiple '
                              'patterns')
-    parser.add_argument('--no-config', action='store_true',
-                        help="don't look for and apply local config files; "
-                        'if not passed, defaults are updated with any '
-                        "config files in the project's root dir")
+    parser.add_argument('--no-config', action='store_false', dest='config',
+                        help="don't look for and apply local configuration "
+                             'files; if not passed, defaults are updated with '
+                             "any config files in the project's root "
+                             'directory')
     parser.add_argument('--version', action='version',
                         version='%(prog)s ' + __version__)
     parser.add_argument('files', nargs='+', help='files to format')
