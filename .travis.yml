@@ -24,6 +24,9 @@ script:
     - pyformat pyformat.py
     - python test_acid.py setup.py
 
+    - pep8 pyformat.py
+    - pip install pyflakes; pyflakes pyformat.py
+
 after_success:
     - pip install --quiet coverage
     - make coverage
