@@ -315,6 +315,52 @@ x = "abc"
 +x = 'abc'
 """, '\n'.join(output.decode().split('\n')[3:]))
 
+    def test_no_config(self):
+        self.maxDiff = None
+        source = """\
+x = ['The limits are chosen to avoid wrapping in editors with the window', 'width set to 80, even if the ', 'tool places a marker glyph in the final column when wrapping lines.']
+"""
+        expected = """\
+@@ -1 +1,2 @@
+-x = ['The limits are chosen to avoid wrapping in editors with the window', 'width set to 80, even if the ', 'tool places a marker glyph in the final column when wrapping lines.']
++x = ['The limits are chosen to avoid wrapping in editors with the window',
++     'width set to 80, even if the ', 'tool places a marker glyph in the final column when wrapping lines.']
+"""
+        expected_no_conifg = """\
+@@ -1 +1,3 @@
+-x = ['The limits are chosen to avoid wrapping in editors with the window', 'width set to 80, even if the ', 'tool places a marker glyph in the final column when wrapping lines.']
++x = ['The limits are chosen to avoid wrapping in editors with the window',
++     'width set to 80, even if the ',
++     'tool places a marker glyph in the final column when wrapping lines.']
+"""
+        setup_cfg = """\
+[pep8]
+max-line-length = 120
+"""
+        with temporary_directory() as directory:
+            with temporary_file(source, prefix='food', directory=directory) as filename, \
+                    temporary_named_file(setup_cfg, name='setup.cfg', directory=directory), \
+                    change_cwd(directory):
+
+                output_file = io.StringIO()
+                pyformat._main(argv=['my_fake_program',
+                                     '--aggressive',
+                                     filename],
+                               standard_out=output_file,
+                               standard_error=None)
+                self.assertEqual(expected, '\n'.join(
+                                 output_file.getvalue().split('\n')[2:]))
+
+                output_file = io.StringIO()
+                pyformat._main(argv=['my_fake_program',
+                                     '--aggressive',
+                                     '--no-config',
+                                     filename],
+                               standard_out=output_file,
+                               standard_error=None)
+                self.assertEqual(expected_no_conifg, '\n'.join(
+                                 output_file.getvalue().split('\n')[2:]))
+
 
 @contextlib.contextmanager
 def temporary_file(contents, directory='.', prefix=''):
@@ -330,6 +376,20 @@ def temporary_file(contents, directory='.', prefix=''):
 
 
 @contextlib.contextmanager
+def temporary_named_file(contents, name, directory='.'):
+    """Write contents to temporary file and yield it."""
+    path = os.path.join(directory, name)
+    try:
+        with open(path, 'wb') as f:
+            f.write(contents.encode())
+            f.close()
+            yield path
+    finally:
+        if os.path.exists(path):
+            os.remove(path)
+
+
+@contextlib.contextmanager
 def temporary_directory(directory='.', prefix=''):
     """Create temporary directory and yield its path."""
     temp_directory = tempfile.mkdtemp(prefix=prefix, dir=directory)
@@ -337,6 +397,33 @@ def temporary_directory(directory='.', prefix=''):
         yield temp_directory
     finally:
         shutil.rmtree(temp_directory)
+
+
+@contextlib.contextmanager
+def change_cwd(path, quiet=False):
+    """Return a context manager that changes the current working directory.
+
+    Arguments:
+
+      path: the directory to use as the temporary current working directory.
+
+      quiet: if False (the default), the context manager raises an exception
+        on error.  Otherwise, it issues only a warning and keeps the current
+        working directory the same.
+
+    """
+    saved_dir = os.getcwd()
+    try:
+        os.chdir(path)
+    except OSError:
+        if not quiet:
+            raise
+        warnings.warn('tests may fail, unable to change CWD to: ' + path,
+                      RuntimeWarning, stacklevel=3)
+    try:
+        yield os.getcwd()
+    finally:
+        os.chdir(saved_dir)
 
 
 if __name__ == '__main__':
