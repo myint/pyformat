@@ -318,29 +318,25 @@ x = "abc"
     def test_no_config(self):
         self.maxDiff = None
         source = """\
-x = ['The limits are chosen to avoid wrapping in editors with the window', 'width set to 80, even if the ', 'tool places a marker glyph in the final column when wrapping lines.']
+x =1
 """
-        expected = """\
-@@ -1 +1,2 @@
--x = ['The limits are chosen to avoid wrapping in editors with the window', 'width set to 80, even if the ', 'tool places a marker glyph in the final column when wrapping lines.']
-+x = ['The limits are chosen to avoid wrapping in editors with the window',
-+     'width set to 80, even if the ', 'tool places a marker glyph in the final column when wrapping lines.']
-"""
+        expected = ''
         expected_no_config = """\
-@@ -1 +1,3 @@
--x = ['The limits are chosen to avoid wrapping in editors with the window', 'width set to 80, even if the ', 'tool places a marker glyph in the final column when wrapping lines.']
-+x = ['The limits are chosen to avoid wrapping in editors with the window',
-+     'width set to 80, even if the ',
-+     'tool places a marker glyph in the final column when wrapping lines.']
+@@ -1 +1 @@
+-x =1
++x = 1
 """
         setup_cfg = """\
 [pep8]
-max-line-length = 120
+ignore=E
 """
         with temporary_directory() as directory:
-            with temporary_file(source, prefix='food', directory=directory) as filename, \
-                    temporary_named_file(setup_cfg, name='setup.cfg', directory=directory):
-
+            with temporary_file(source,
+                                prefix='food',
+                                directory=directory) as filename, \
+                    temporary_named_file(setup_cfg,
+                                         name='setup.cfg',
+                                         directory=directory):
                 output_file = io.StringIO()
                 pyformat._main(argv=['my_fake_program',
                                      '--aggressive',
