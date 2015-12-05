@@ -316,7 +316,6 @@ x = "abc"
 """, '\n'.join(output.decode().split('\n')[3:]))
 
     def test_no_config(self):
-        self.maxDiff = None
         source = """\
 x =1
 """
