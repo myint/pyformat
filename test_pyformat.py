@@ -339,8 +339,7 @@ max-line-length = 120
 """
         with temporary_directory() as directory:
             with temporary_file(source, prefix='food', directory=directory) as filename, \
-                    temporary_named_file(setup_cfg, name='setup.cfg', directory=directory), \
-                    change_cwd(directory):
+                    temporary_named_file(setup_cfg, name='setup.cfg', directory=directory):
 
                 output_file = io.StringIO()
                 pyformat._main(argv=['my_fake_program',
@@ -397,33 +396,6 @@ def temporary_directory(directory='.', prefix=''):
         yield temp_directory
     finally:
         shutil.rmtree(temp_directory)
-
-
-@contextlib.contextmanager
-def change_cwd(path, quiet=False):
-    """Return a context manager that changes the current working directory.
-
-    Arguments:
-
-      path: the directory to use as the temporary current working directory.
-
-      quiet: if False (the default), the context manager raises an exception
-        on error.  Otherwise, it issues only a warning and keeps the current
-        working directory the same.
-
-    """
-    saved_dir = os.getcwd()
-    try:
-        os.chdir(path)
-    except OSError:
-        if not quiet:
-            raise
-        warnings.warn('tests may fail, unable to change CWD to: ' + path,
-                      RuntimeWarning, stacklevel=3)
-    try:
-        yield os.getcwd()
-    finally:
-        os.chdir(saved_dir)
 
 
 if __name__ == '__main__':
