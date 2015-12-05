@@ -315,6 +315,51 @@ x = "abc"
 +x = 'abc'
 """, '\n'.join(output.decode().split('\n')[3:]))
 
+    def test_no_config(self):
+        self.maxDiff = None
+        source = """\
+x = ['The limits are chosen to avoid wrapping in editors with the window', 'width set to 80, even if the ', 'tool places a marker glyph in the final column when wrapping lines.']
+"""
+        expected = """\
+@@ -1 +1,2 @@
+-x = ['The limits are chosen to avoid wrapping in editors with the window', 'width set to 80, even if the ', 'tool places a marker glyph in the final column when wrapping lines.']
++x = ['The limits are chosen to avoid wrapping in editors with the window',
++     'width set to 80, even if the ', 'tool places a marker glyph in the final column when wrapping lines.']
+"""
+        expected_no_conifg = """\
+@@ -1 +1,3 @@
+-x = ['The limits are chosen to avoid wrapping in editors with the window', 'width set to 80, even if the ', 'tool places a marker glyph in the final column when wrapping lines.']
++x = ['The limits are chosen to avoid wrapping in editors with the window',
++     'width set to 80, even if the ',
++     'tool places a marker glyph in the final column when wrapping lines.']
+"""
+        setup_cfg = """\
+[pep8]
+max-line-length = 120
+"""
+        with temporary_directory() as directory:
+            with temporary_file(source, prefix='food', directory=directory) as filename, \
+                    temporary_named_file(setup_cfg, name='setup.cfg', directory=directory):
+
+                output_file = io.StringIO()
+                pyformat._main(argv=['my_fake_program',
+                                     '--aggressive',
+                                     filename],
+                               standard_out=output_file,
+                               standard_error=None)
+                self.assertEqual(expected, '\n'.join(
+                                 output_file.getvalue().split('\n')[2:]))
+
+                output_file = io.StringIO()
+                pyformat._main(argv=['my_fake_program',
+                                     '--aggressive',
+                                     '--no-config',
+                                     filename],
+                               standard_out=output_file,
+                               standard_error=None)
+                self.assertEqual(expected_no_conifg, '\n'.join(
+                                 output_file.getvalue().split('\n')[2:]))
+
 
 @contextlib.contextmanager
 def temporary_file(contents, directory='.', prefix=''):
@@ -327,6 +372,20 @@ def temporary_file(contents, directory='.', prefix=''):
         yield f.name
     finally:
         os.remove(f.name)
+
+
+@contextlib.contextmanager
+def temporary_named_file(contents, name, directory='.'):
+    """Write contents to temporary file and yield it."""
+    path = os.path.join(directory, name)
+    try:
+        with open(path, 'wb') as f:
+            f.write(contents.encode())
+            f.close()
+            yield path
+    finally:
+        if os.path.exists(path):
+            os.remove(path)
 
 
 @contextlib.contextmanager
