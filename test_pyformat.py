@@ -330,12 +330,12 @@ x =1
 ignore=E
 """
         with temporary_directory() as directory:
-            with temporary_file(source,
-                                prefix='food',
-                                directory=directory) as filename, \
-                    temporary_named_file(setup_cfg,
-                                         name='setup.cfg',
-                                         directory=directory):
+            with temporary_file(source, directory=directory) as filename:
+
+                with open(os.path.join(directory, 'setup.cfg'),
+                          'w') as setup_file:
+                    setup_file.write(setup_cfg)
+
                 output_file = io.StringIO()
                 pyformat._main(argv=['my_fake_program',
                                      '--aggressive',
@@ -367,20 +367,6 @@ def temporary_file(contents, directory='.', prefix=''):
         yield f.name
     finally:
         os.remove(f.name)
-
-
-@contextlib.contextmanager
-def temporary_named_file(contents, name, directory='.'):
-    """Write contents to temporary file and yield it."""
-    path = os.path.join(directory, name)
-    try:
-        with open(path, 'wb') as f:
-            f.write(contents.encode())
-            f.close()
-            yield path
-    finally:
-        if os.path.exists(path):
-            os.remove(path)
 
 
 @contextlib.contextmanager
