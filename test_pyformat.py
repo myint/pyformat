@@ -326,7 +326,7 @@ x = ['The limits are chosen to avoid wrapping in editors with the window', 'widt
 +x = ['The limits are chosen to avoid wrapping in editors with the window',
 +     'width set to 80, even if the ', 'tool places a marker glyph in the final column when wrapping lines.']
 """
-        expected_no_conifg = """\
+        expected_no_config = """\
 @@ -1 +1,3 @@
 -x = ['The limits are chosen to avoid wrapping in editors with the window', 'width set to 80, even if the ', 'tool places a marker glyph in the final column when wrapping lines.']
 +x = ['The limits are chosen to avoid wrapping in editors with the window',
@@ -357,7 +357,7 @@ max-line-length = 120
                                      filename],
                                standard_out=output_file,
                                standard_error=None)
-                self.assertEqual(expected_no_conifg, '\n'.join(
+                self.assertEqual(expected_no_config, '\n'.join(
                                  output_file.getvalue().split('\n')[2:]))
 
 
