@@ -14,9 +14,7 @@ env:
     - LANG=
     - PYTHONIOENCODING=ascii
     - PYTHONIOENCODING=utf-8
-
-    # TODO: Switch this to 2 once a new version of autopep8 is released.
-    - PYTHONOPTIMIZE=1
+    - PYTHONOPTIMIZE=2
 
 install:
     - python setup.py --quiet install
