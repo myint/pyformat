@@ -41,10 +41,10 @@ import unify
 __version__ = '0.6'
 
 
-def formatters(aggressive, apply_config, filename=''):
+def formatters(aggressive, apply_config, filename='', remove_all_unused_imports=False):
     """Return list of code formatters."""
     if aggressive:
-        yield autoflake.fix_code
+        yield lambda code: autoflake.fix_code(code, remove_all_unused_imports=remove_all_unused_imports)
         autopep8_options = autopep8.parse_args(
             [filename] + int(aggressive) * ['--aggressive'],
             apply_config=apply_config)
@@ -57,11 +57,12 @@ def formatters(aggressive, apply_config, filename=''):
     yield unify.format_code
 
 
-def format_code(source, aggressive=False, apply_config=False, filename=''):
+def format_code(source, aggressive=False, apply_config=False, filename='',
+                remove_all_unused_imports=False):
     """Return formatted source code."""
     formatted_source = source
 
-    for fix in formatters(aggressive, apply_config, filename):
+    for fix in formatters(aggressive, apply_config, filename, remove_all_unused_imports):
         formatted_source = fix(formatted_source)
 
     return formatted_source
