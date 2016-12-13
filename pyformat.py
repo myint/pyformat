@@ -41,8 +41,8 @@ import unify
 __version__ = '0.6'
 
 
-def formatters(aggressive, apply_config, filename='', remove_all_unused_imports=False,
-               remove_unused_variables=False):
+def formatters(aggressive, apply_config, filename='',
+               remove_all_unused_imports=False, remove_unused_variables=False):
     """Return list of code formatters."""
     if aggressive:
         yield lambda code: autoflake.fix_code(
@@ -62,7 +62,8 @@ def formatters(aggressive, apply_config, filename='', remove_all_unused_imports=
 
 
 def format_code(source, aggressive=False, apply_config=False, filename='',
-                remove_all_unused_imports=False, remove_unused_variables=False):
+                remove_all_unused_imports=False,
+                remove_unused_variables=False):
     """Return formatted source code."""
     formatted_source = source
 
@@ -88,12 +89,13 @@ def format_file(filename, args, standard_out):
     if not source:
         return False
 
-    formatted_source = format_code(source,
-                                   aggressive=args.aggressive,
-                                   apply_config=args.config,
-                                   filename=filename,
-                                   remove_all_unused_imports=args.remove_all_unused_imports,
-                                   remove_unused_variables=args.remove_unused_variables)
+    formatted_source = format_code(
+        source,
+        aggressive=args.aggressive,
+        apply_config=args.config,
+        filename=filename,
+        remove_all_unused_imports=args.remove_all_unused_imports,
+        remove_unused_variables=args.remove_unused_variables)
 
     if source != formatted_source:
         if args.in_place:
@@ -170,7 +172,8 @@ def parse_args(argv):
     parser.add_argument('-a', '--aggressive', action='count', default=0,
                         help='use more aggressive formatters')
     parser.add_argument('--remove-all-unused-imports', action='store_true',
-                        help='remove all unused imports, not just standard library (requires "aggresive")')
+                        help='remove all unused imports, not just standard library \
+(requires "aggresive")')
     parser.add_argument('--remove-unused-variables', action='store_true',
                         help='remove unused variables (requires "aggresive")')
     parser.add_argument('-j', '--jobs', type=int, metavar='n', default=1,
