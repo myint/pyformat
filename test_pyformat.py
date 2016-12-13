@@ -337,6 +337,26 @@ def test():
     return 42
 ''', f.read())
 
+    def test_remove_unused_variables(self):
+        with temporary_file("""\
+def test():
+    x = 43
+    return 42
+""") as filename:
+            output_file = io.StringIO()
+            pyformat._main(argv=['my_fake_program',
+                                 '--in-place',
+                                 '--aggressive',
+                                 '--remove-unused-variables',
+                                 filename],
+                           standard_out=output_file,
+                           standard_error=None)
+            with open(filename) as f:
+                self.assertEqual('''\
+def test():
+    return 42
+''', f.read())
+
     def test_end_to_end(self):
         with temporary_file("""\
 import os

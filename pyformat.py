@@ -92,7 +92,8 @@ def format_file(filename, args, standard_out):
                                    aggressive=args.aggressive,
                                    apply_config=args.config,
                                    filename=filename,
-                                   remove_all_unused_imports=args.remove_all_unused_imports)
+                                   remove_all_unused_imports=args.remove_all_unused_imports,
+                                   remove_unused_variables=args.remove_unused_variables)
 
     if source != formatted_source:
         if args.in_place:
@@ -169,7 +170,9 @@ def parse_args(argv):
     parser.add_argument('-a', '--aggressive', action='count', default=0,
                         help='use more aggressive formatters')
     parser.add_argument('--remove-all-unused-imports', action='store_true',
-                        help='remove all unused imports, not just standard library')
+                        help='remove all unused imports, not just standard library (requires "aggresive")')
+    parser.add_argument('--remove-unused-variables', action='store_true',
+                        help='remove unused variables (requires "aggresive")')
     parser.add_argument('-j', '--jobs', type=int, metavar='n', default=1,
                         help='number of parallel jobs; '
                              'match CPU count if value is less than 1')
