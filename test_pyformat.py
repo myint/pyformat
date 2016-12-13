@@ -63,7 +63,7 @@ class TestUnits(unittest.TestCase):
     def test_format_code_with_remove_all_unused_imports(self):
         self.assertEqual("x = 'abc' \\\n    'ö'\n",
                          pyformat.format_code(
-                             'import os\nx = "abc" \\\n"ö"\n', aggressive=True,
+                             'import mymodule\nx = "abc" \\\n"ö"\n', aggressive=True,
                              remove_all_unused_imports=True))
 
     def test_format_multiple_files(self):
