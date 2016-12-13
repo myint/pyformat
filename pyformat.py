@@ -85,7 +85,8 @@ def format_file(filename, args, standard_out):
     formatted_source = format_code(source,
                                    aggressive=args.aggressive,
                                    apply_config=args.config,
-                                   filename=filename)
+                                   filename=filename,
+                                   remove_all_unused_imports=args.remove_all_unused_imports)
 
     if source != formatted_source:
         if args.in_place:
@@ -161,6 +162,8 @@ def parse_args(argv):
                         help='drill down directories recursively')
     parser.add_argument('-a', '--aggressive', action='count', default=0,
                         help='use more aggressive formatters')
+    parser.add_argument('--remove-all-unused-imports', action='store_true',
+                        help='remove all unused imports, not just standard library')
     parser.add_argument('-j', '--jobs', type=int, metavar='n', default=1,
                         help='number of parallel jobs; '
                              'match CPU count if value is less than 1')

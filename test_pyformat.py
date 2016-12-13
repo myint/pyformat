@@ -64,7 +64,7 @@ class TestUnits(unittest.TestCase):
         self.assertEqual("x = 'abc' \\\n    'ö'\n",
                          pyformat.format_code(
                              'import os\nx = "abc" \\\n"ö"\n', aggressive=True,
-                            remove_all_unused_imports=True))
+                             remove_all_unused_imports=True))
 
     def test_format_multiple_files(self):
         with temporary_file('''\
@@ -308,6 +308,28 @@ if True:
                 self.assertEqual(
                     '',
                     output_file.getvalue().strip())
+
+    def test_remove_all_unused_imports(self):
+        with temporary_file("""\
+import mymodule
+
+def test():
+    return 42
+""") as filename:
+            output_file = io.StringIO()
+            pyformat._main(argv=['my_fake_program',
+                                 '--in-place',
+                                 '--aggressive',
+                                 '--remove-all-unused-imports',
+                                 filename],
+                           standard_out=output_file,
+                           standard_error=None)
+            with open(filename) as f:
+                self.assertEqual('''\
+
+def test():
+    return 42
+''', f.read())
 
     def test_end_to_end(self):
         with temporary_file("""\
