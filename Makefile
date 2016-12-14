@@ -1,12 +1,9 @@
 check:
-	pep8 pyformat.py setup.py
-	pep257 pyformat.py setup.py
+	pycodestyle pyformat.py setup.py
+	pydocstyle pyformat.py setup.py
 	pylint \
-		--reports=no \
-		--disable=bad-continuation \
-		--disable=no-member \
-		--disable=not-callable \
 		--rcfile=/dev/null \
+		--errors-only \
 		pyformat.py setup.py
 	check-manifest
 	rstcheck README.rst

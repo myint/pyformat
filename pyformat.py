@@ -49,6 +49,7 @@ def formatters(aggressive, apply_config, filename='',
             code,
             remove_all_unused_imports=remove_all_unused_imports,
             remove_unused_variables=remove_unused_variables)
+
         autopep8_options = autopep8.parse_args(
             [filename] + int(aggressive) * ['--aggressive'],
             apply_config=apply_config)
