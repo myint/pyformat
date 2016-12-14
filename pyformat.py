@@ -41,10 +41,14 @@ import unify
 __version__ = '0.6'
 
 
-def formatters(aggressive, apply_config, filename=''):
+def formatters(aggressive, apply_config, filename='',
+               remove_all_unused_imports=False, remove_unused_variables=False):
     """Return list of code formatters."""
     if aggressive:
-        yield autoflake.fix_code
+        yield lambda code: autoflake.fix_code(
+            code,
+            remove_all_unused_imports=remove_all_unused_imports,
+            remove_unused_variables=remove_unused_variables)
         autopep8_options = autopep8.parse_args(
             [filename] + int(aggressive) * ['--aggressive'],
             apply_config=apply_config)
@@ -57,11 +61,15 @@ def formatters(aggressive, apply_config, filename=''):
     yield unify.format_code
 
 
-def format_code(source, aggressive=False, apply_config=False, filename=''):
+def format_code(source, aggressive=False, apply_config=False, filename='',
+                remove_all_unused_imports=False,
+                remove_unused_variables=False):
     """Return formatted source code."""
     formatted_source = source
 
-    for fix in formatters(aggressive, apply_config, filename):
+    for fix in formatters(
+            aggressive, apply_config, filename,
+            remove_all_unused_imports, remove_unused_variables):
         formatted_source = fix(formatted_source)
 
     return formatted_source
@@ -81,10 +89,13 @@ def format_file(filename, args, standard_out):
     if not source:
         return False
 
-    formatted_source = format_code(source,
-                                   aggressive=args.aggressive,
-                                   apply_config=args.config,
-                                   filename=filename)
+    formatted_source = format_code(
+        source,
+        aggressive=args.aggressive,
+        apply_config=args.config,
+        filename=filename,
+        remove_all_unused_imports=args.remove_all_unused_imports,
+        remove_unused_variables=args.remove_unused_variables)
 
     if source != formatted_source:
         if args.in_place:
@@ -160,6 +171,12 @@ def parse_args(argv):
                         help='drill down directories recursively')
     parser.add_argument('-a', '--aggressive', action='count', default=0,
                         help='use more aggressive formatters')
+    parser.add_argument('--remove-all-unused-imports', action='store_true',
+                        help='remove all unused imports, '
+                             'not just standard library '
+                             '(requires "aggressive")')
+    parser.add_argument('--remove-unused-variables', action='store_true',
+                        help='remove unused variables (requires "aggressive")')
     parser.add_argument('-j', '--jobs', type=int, metavar='n', default=1,
                         help='number of parallel jobs; '
                              'match CPU count if value is less than 1')
@@ -184,6 +201,12 @@ def parse_args(argv):
     if args.jobs < 1:
         import multiprocessing
         args.jobs = multiprocessing.cpu_count()
+
+    if args.remove_all_unused_imports and not args.aggressive:
+        parser.error('--remove-all-unused-imports requires --aggressive')
+
+    if args.remove_unused_variables and not args.aggressive:
+        parser.error('--remove-unused-variables requires --aggressive')
 
     return args
 

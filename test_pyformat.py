@@ -60,6 +60,18 @@ class TestUnits(unittest.TestCase):
                          pyformat.format_code(
                              'x = "abc" \\\n"ö"\n'))
 
+    def test_format_code_with_remove_all_unused_imports(self):
+        self.assertEqual("x = 'abc' \\\n    'ö'\n",
+                         pyformat.format_code(
+                             'import mymodule\nx = "abc" \\\n"ö"\n', aggressive=True,
+                             remove_all_unused_imports=True))
+
+    def test_format_code_with_remove_unused_variables(self):
+        self.assertEqual("def test():\n    return 42\n",
+                         pyformat.format_code(
+                             'def test():\n    x = 4\n    return 42', aggressive=True,
+                             remove_unused_variables=True))
+
     def test_format_multiple_files(self):
         with temporary_file('''\
 if True:
@@ -242,6 +254,22 @@ if True:
 
         self.assertGreater(args.jobs, 0)
 
+    def test_remove_all_unused_imports_requires_aggressive(self):
+        _stderr = sys.stderr
+        sys.stderr = io.StringIO()
+        self.assertRaises(
+            SystemExit, pyformat.parse_args,
+            ['my_fake_program', '--remove-all-unused-imports', __file__])
+        sys.stderr = _stderr
+
+    def test_remove_unused_variables_requires_aggressive(self):
+        _stderr = sys.stderr
+        sys.stderr = io.StringIO()
+        self.assertRaises(
+            SystemExit, pyformat.parse_args,
+            ['my_fake_program', '--remove-unused-variables', __file__])
+        sys.stderr = _stderr
+
     def test_ignore_hidden_directories(self):
         with temporary_directory() as directory:
             with temporary_directory(prefix='.',
@@ -302,6 +330,48 @@ if True:
                 self.assertEqual(
                     '',
                     output_file.getvalue().strip())
+
+    def test_remove_all_unused_imports(self):
+        with temporary_file("""\
+import mymodule
+
+def test():
+    return 42
+""") as filename:
+            output_file = io.StringIO()
+            pyformat._main(argv=['my_fake_program',
+                                 '--in-place',
+                                 '--aggressive',
+                                 '--remove-all-unused-imports',
+                                 filename],
+                           standard_out=output_file,
+                           standard_error=None)
+            with open(filename) as f:
+                self.assertEqual('''\
+
+def test():
+    return 42
+''', f.read())
+
+    def test_remove_unused_variables(self):
+        with temporary_file("""\
+def test():
+    x = 43
+    return 42
+""") as filename:
+            output_file = io.StringIO()
+            pyformat._main(argv=['my_fake_program',
+                                 '--in-place',
+                                 '--aggressive',
+                                 '--remove-unused-variables',
+                                 filename],
+                           standard_out=output_file,
+                           standard_error=None)
+            with open(filename) as f:
+                self.assertEqual('''\
+def test():
+    return 42
+''', f.read())
 
     def test_end_to_end(self):
         with temporary_file("""\
