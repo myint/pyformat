@@ -172,10 +172,11 @@ def parse_args(argv):
     parser.add_argument('-a', '--aggressive', action='count', default=0,
                         help='use more aggressive formatters')
     parser.add_argument('--remove-all-unused-imports', action='store_true',
-                        help='remove all unused imports, not just standard library \
-(requires "aggresive")')
+                        help='remove all unused imports, '
+                             'not just standard library '
+                             '(requires "aggressive")')
     parser.add_argument('--remove-unused-variables', action='store_true',
-                        help='remove unused variables (requires "aggresive")')
+                        help='remove unused variables (requires "aggressive")')
     parser.add_argument('-j', '--jobs', type=int, metavar='n', default=1,
                         help='number of parallel jobs; '
                              'match CPU count if value is less than 1')
@@ -200,6 +201,12 @@ def parse_args(argv):
     if args.jobs < 1:
         import multiprocessing
         args.jobs = multiprocessing.cpu_count()
+
+    if args.remove_all_unused_imports and not args.aggressive:
+        parser.error('--remove-all-unused-imports requires --aggressive')
+
+    if args.remove_unused_variables and not args.aggressive:
+        parser.error('--remove-unused-variables requires --aggressive')
 
     return args
 

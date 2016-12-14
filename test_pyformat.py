@@ -254,6 +254,22 @@ if True:
 
         self.assertGreater(args.jobs, 0)
 
+    def test_remove_all_unused_imports_requires_aggressive(self):
+        _stderr = sys.stderr
+        sys.stderr = io.StringIO()
+        self.assertRaises(
+            SystemExit, pyformat.parse_args,
+            ['my_fake_program', '--remove-all-unused-imports', __file__])
+        sys.stderr = _stderr
+
+    def test_remove_unused_variables_requires_aggressive(self):
+        _stderr = sys.stderr
+        sys.stderr = io.StringIO()
+        self.assertRaises(
+            SystemExit, pyformat.parse_args,
+            ['my_fake_program', '--remove-unused-variables', __file__])
+        sys.stderr = _stderr
+
     def test_ignore_hidden_directories(self):
         with temporary_directory() as directory:
             with temporary_directory(prefix='.',
