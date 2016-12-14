@@ -241,10 +241,12 @@ if True:
 
     def test_multiple_jobs_should_require_in_place(self):
         output_file = io.StringIO()
-        pyformat._main(argv=['my_fake_program',
-                             '--jobs=2', __file__],
-                       standard_out=output_file,
-                       standard_error=output_file)
+        self.assertEqual(
+            2,
+            pyformat._main(argv=['my_fake_program',
+                                 '--jobs=2', __file__],
+                           standard_out=output_file,
+                           standard_error=output_file))
 
         self.assertIn('requires --in-place', output_file.getvalue())
 
@@ -255,20 +257,27 @@ if True:
         self.assertGreater(args.jobs, 0)
 
     def test_remove_all_unused_imports_requires_aggressive(self):
-        _stderr = sys.stderr
-        sys.stderr = io.StringIO()
-        self.assertRaises(
-            SystemExit, pyformat.parse_args,
-            ['my_fake_program', '--remove-all-unused-imports', __file__])
-        sys.stderr = _stderr
+        output_file = io.StringIO()
+        self.assertEqual(
+            2,
+            pyformat._main(argv=['my_fake_program',
+                                 '--remove-all-unused-imports', __file__],
+                           standard_out=output_file,
+                           standard_error=output_file))
+
+        self.assertIn('requires --aggressive', output_file.getvalue())
 
     def test_remove_unused_variables_requires_aggressive(self):
-        _stderr = sys.stderr
-        sys.stderr = io.StringIO()
-        self.assertRaises(
-            SystemExit, pyformat.parse_args,
-            ['my_fake_program', '--remove-unused-variables', __file__])
-        sys.stderr = _stderr
+        output_file = io.StringIO()
+        self.assertEqual(
+            2,
+            pyformat._main(
+                argv=['my_fake_program',
+                      '--remove-unused-variables', __file__],
+                standard_out=output_file,
+                standard_error=output_file))
+
+        self.assertIn('requires --aggressive', output_file.getvalue())
 
     def test_ignore_hidden_directories(self):
         with temporary_directory() as directory:

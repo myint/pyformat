@@ -202,12 +202,6 @@ def parse_args(argv):
         import multiprocessing
         args.jobs = multiprocessing.cpu_count()
 
-    if args.remove_all_unused_imports and not args.aggressive:
-        parser.error('--remove-all-unused-imports requires --aggressive')
-
-    if args.remove_unused_variables and not args.aggressive:
-        parser.error('--remove-unused-variables requires --aggressive')
-
     return args
 
 
@@ -222,7 +216,18 @@ def _main(argv, standard_out, standard_error):
     if args.jobs > 1 and not args.in_place:
         print('parallel jobs requires --in-place',
               file=standard_error)
-        return 1
+        return 2
+
+    if not args.aggressive:
+        if args.remove_all_unused_imports:
+            print('--remove-all-unused-imports requires --aggressive',
+                  file=standard_error)
+            return 2
+
+        if args.remove_unused_variables:
+            print('--remove-unused-variables requires --aggressive',
+                  file=standard_error)
+            return 2
 
     format_multiple_files(set(args.files), args, standard_out, standard_error)
 
