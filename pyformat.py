@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (C) 2013-2015 Steven Myint
+# Copyright (C) 2013-2017 Steven Myint
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -38,7 +38,7 @@ import docformatter
 import unify
 
 
-__version__ = '0.7a0'
+__version__ = '0.7'
 
 
 def formatters(aggressive, apply_config, filename='',
