@@ -24,7 +24,7 @@ script:
     - pyformat pyformat.py
     - python test_acid.py setup.py
 
-    - pep8 pyformat.py
+    - pycodestyle pyformat.py
     - pip install pyflakes; pyflakes pyformat.py
 
 after_success:
