@@ -74,7 +74,7 @@ class TestUnits(unittest.TestCase):
 
     def test_format_code_with_remove_unused_variables(self):
         self.assertEqual(
-            "def test():\n    return 42\n",
+            'def test():\n    return 42\n',
             pyformat.format_code(
                 'def test():\n    x = 4\n    return 42',
                 aggressive=True,

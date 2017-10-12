@@ -231,10 +231,10 @@ def _main(argv, standard_out, standard_error):
                   file=standard_error)
             return 2
 
-    changed_and_error =  format_multiple_files(set(args.files),
-                                               args,
-                                               standard_out,
-                                               standard_error)
+    changed_and_error = format_multiple_files(set(args.files),
+                                              args,
+                                              standard_out,
+                                              standard_error)
     return 1 if changed_and_error[1] else 0
 
 
