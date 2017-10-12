@@ -114,7 +114,7 @@ if True:
                 standard_out=output_file,
                 standard_error=None)
 
-            self.assertFalse(result)
+            self.assertFalse(result[0])
 
     def test_format_multiple_files_with_nonexistent_file(self):
         output_file = io.StringIO()
@@ -125,7 +125,8 @@ if True:
             standard_out=output_file,
             standard_error=output_file)
 
-        self.assertFalse(result)
+        self.assertFalse(result[0])
+        self.assertTrue(result[1])
 
     def test_format_multiple_files_with_nonexistent_file_and_verbose(self):
         output_file = io.StringIO()
@@ -137,7 +138,8 @@ if True:
             standard_out=output_file,
             standard_error=output_file)
 
-        self.assertFalse(result)
+        self.assertFalse(result[0])
+        self.assertTrue(result[1])
 
 
 class TestSystem(unittest.TestCase):

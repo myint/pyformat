@@ -38,7 +38,7 @@ import docformatter
 import unify
 
 
-__version__ = '0.7'
+__version__ = '1.0a0'
 
 
 def formatters(aggressive, apply_config, filename='',
@@ -128,18 +128,18 @@ def _format_file(parameters):
         changed = format_file(*parameters[:-1])
     except IOError as exception:
         print('{}'.format(exception), file=standard_error)
-        return False
+        return (False, True)
     except KeyboardInterrupt:  # pragma: no cover
-        return False  # pragma: no cover
+        return (False, True)  # pragma: no cover
 
     if args.verbose:
         print('changed' if changed else 'unchanged', file=standard_error)
 
-    return changed
+    return (changed, False)
 
 
 def format_multiple_files(filenames, args, standard_out, standard_error):
-    """Format files.
+    """Format files and return booleans (any_changes, any_errors).
 
     Optionally format files recursively.
 
@@ -159,7 +159,8 @@ def format_multiple_files(filenames, args, standard_out, standard_error):
         result = [_format_file((name, args, standard_out, standard_error))
                   for name in filenames]
 
-    return any(result)
+    return (any(changed_and_error[0] for changed_and_error in result),
+            any(changed_and_error[1] for changed_and_error in result))
 
 
 def parse_args(argv):
@@ -230,7 +231,11 @@ def _main(argv, standard_out, standard_error):
                   file=standard_error)
             return 2
 
-    format_multiple_files(set(args.files), args, standard_out, standard_error)
+    changed_and_error =  format_multiple_files(set(args.files),
+                                               args,
+                                               standard_out,
+                                               standard_error)
+    return 1 if changed_and_error[1] else 0
 
 
 def main():
