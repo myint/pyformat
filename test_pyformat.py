@@ -150,7 +150,7 @@ import os
 x = "abc"
 ''') as filename:
             output_file = io.StringIO()
-            pyformat._main(argv=['my_fake_program', filename],
+            pyformat._main(argv=['my_fake_program','--diff',  filename],
                            standard_out=output_file,
                            standard_error=None)
             self.assertEqual('''\
@@ -166,7 +166,7 @@ import os
 x = "abc"
 ''') as filename:
             output_file = io.StringIO()
-            pyformat._main(argv=['my_fake_program', '--aggressive', filename],
+            pyformat._main(argv=['my_fake_program', '--diff', '--aggressive', filename],
                            standard_out=output_file,
                            standard_error=None)
             self.assertEqual('''\
@@ -193,7 +193,7 @@ import my_own_module
 x = 1
 """) as filename:
             output_file = io.StringIO()
-            pyformat._main(argv=['my_fake_program', '--aggressive', filename],
+            pyformat._main(argv=['my_fake_program', '--diff', '--aggressive', filename],
                            standard_out=output_file,
                            standard_error=None)
             self.assertEqual("""\
@@ -321,6 +321,7 @@ if True:
                                      '--recursive',
                                      '--exclude=zap',
                                      '--exclude=x*oo*',
+                                     '--diff',
                                      directory],
                                standard_out=output_file,
                                standard_error=None)
@@ -397,7 +398,7 @@ def test():
 import os
 x = "abc"
 """) as filename:
-            output = subprocess.check_output(PYFORMAT_COMMAND + [filename])
+            output = subprocess.check_output(PYFORMAT_COMMAND + ['--diff', filename])
             self.assertEqual("""\
  import os
 -x = "abc"
@@ -436,6 +437,7 @@ ignore=E
 
                 output_file = io.StringIO()
                 pyformat._main(argv=['my_fake_program',
+                                     '--diff',
                                      '--aggressive',
                                      '--no-config',
                                      filename],
