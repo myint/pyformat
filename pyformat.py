@@ -41,7 +41,22 @@ import unify
 __version__ = '1.0a0'
 
 
-def formatters(aggressive, apply_config, filename='',
+def _arrange_autopep8_options(filename='', args=None):
+    options = [filename]
+    if args:
+        options += int(args.aggressive) * ['--aggressive']
+        if args.max_line_length:
+            options.append('--max-line-length={}'.format(args.max_line_length))
+        if args.ignore:
+            options.append('--ignore={}'.format(args.ignore))
+        apply_config = args.config
+    else:
+        apply_config = None
+
+    return autopep8.parse_args(options, apply_config=apply_config)
+
+
+def formatters(aggressive, autopep8_options,
                remove_all_unused_imports=False, remove_unused_variables=False):
     """Return list of code formatters."""
     if aggressive:
@@ -49,27 +64,20 @@ def formatters(aggressive, apply_config, filename='',
             code,
             remove_all_unused_imports=remove_all_unused_imports,
             remove_unused_variables=remove_unused_variables)
-
-        autopep8_options = autopep8.parse_args(
-            [filename] + int(aggressive) * ['--aggressive'],
-            apply_config=apply_config)
-    else:
-        autopep8_options = autopep8.parse_args(
-            [filename], apply_config=apply_config)
-
     yield lambda code: autopep8.fix_code(code, options=autopep8_options)
     yield docformatter.format_code
     yield unify.format_code
 
 
-def format_code(source, aggressive=False, apply_config=False, filename='',
+def format_code(source, args=None, aggressive=False, filename='',
                 remove_all_unused_imports=False,
                 remove_unused_variables=False):
     """Return formatted source code."""
     formatted_source = source
 
     for fix in formatters(
-            aggressive, apply_config, filename,
+            aggressive,
+            _arrange_autopep8_options(filename, args),
             remove_all_unused_imports, remove_unused_variables):
         formatted_source = fix(formatted_source)
 
@@ -80,7 +88,6 @@ def format_file(filename, args, standard_out):
     """Run format_code() on a file.
 
     Return True if the new formatting differs from the original.
-
     """
     encoding = autopep8.detect_encoding(filename)
     with autopep8.open_with_encoding(filename,
@@ -92,8 +99,8 @@ def format_file(filename, args, standard_out):
 
     formatted_source = format_code(
         source,
+        args=args,
         aggressive=args.aggressive,
-        apply_config=args.config,
         filename=filename,
         remove_all_unused_imports=args.remove_all_unused_imports,
         remove_unused_variables=args.remove_unused_variables)
@@ -144,7 +151,6 @@ def format_multiple_files(filenames, args, standard_out, standard_error):
     """Format files and return booleans (any_changes, any_errors).
 
     Optionally format files recursively.
-
     """
     filenames = autopep8.find_files(list(filenames),
                                     args.recursive,
@@ -193,6 +199,10 @@ def parse_args(argv):
                         help='exclude files this pattern; '
                              'specify this multiple times for multiple '
                              'patterns')
+    parser.add_argument('--max-line-length', type=int, metavar='n', default=79,
+                        help='set maximum allowed line length (default: 79)')
+    parser.add_argument('--ignore', metavar='errors', default='',
+                        help='do not fix these errors/warnings')
     parser.add_argument('--no-config', action='store_false', dest='config',
                         help="don't look for and apply local configuration "
                              'files; if not passed, defaults are updated with '
@@ -215,7 +225,6 @@ def _main(argv, standard_out, standard_error):
     """Internal main entry point.
 
     Return exit status. 0 means no error.
-
     """
     args = parse_args(argv)
 
