@@ -13,6 +13,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 import pyformat
 
@@ -143,6 +144,58 @@ if True:
 
 
 class TestSystem(unittest.TestCase):
+
+    def test_diff_stdin(self):
+        input_b = b'''\
+import os
+x = "abc"
+'''
+        stdin = io.TextIOWrapper(io.BytesIO(input_b), 'UTF-8')
+        with mock.patch.object(sys, 'stdin', stdin):
+            output_file = io.StringIO()
+            pyformat._main(argv=['my_fake_program', '-'],
+                           standard_out=output_file,
+                           standard_error=None)
+            self.assertEqual('''\
+@@ -1,2 +1,2 @@
+ import os
+-x = "abc"
++x = 'abc'
+''', '\n'.join(output_file.getvalue().split('\n')[2:]))
+
+    def test_in_place_stdin(self):
+        input_b = b'''\
+import os
+x = "abc"
+'''
+        stdin = io.TextIOWrapper(io.BytesIO(input_b), 'UTF-8')
+        with mock.patch.object(sys, 'stdin', stdin):
+            output_file = io.StringIO()
+            pyformat._main(argv=['my_fake_program', '--in-place', '-'],
+                           standard_out=output_file,
+                           standard_error=None)
+            self.assertEqual('''\
+import os
+x = 'abc'
+''', '\n'.join(output_file.getvalue().split('\n')))
+
+
+    def test_in_place_stdin_no_change(self):
+        input_b = b'''\
+import os
+x = 'abc'
+'''
+        stdin = io.TextIOWrapper(io.BytesIO(input_b), 'UTF-8')
+        with mock.patch.object(sys, 'stdin', stdin):
+            output_file = io.StringIO()
+            pyformat._main(argv=['my_fake_program', '--in-place', '-'],
+                           standard_out=output_file,
+                           standard_error=None)
+            self.assertEqual('''\
+import os
+x = 'abc'
+''', '\n'.join(output_file.getvalue().split('\n')))
+
 
     def test_diff(self):
         with temporary_file('''\
