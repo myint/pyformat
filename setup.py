@@ -41,7 +41,8 @@ with open('README.rst') as readme:
           install_requires=['autoflake>=0.6.6',
                             'autopep8>=1.2.2',
                             'docformatter>=0.7',
-                            'unify>=0.2'],
+                            'unify>=0.2',
+                            'isort>=5.9.3'],
           entry_points={
               'console_scripts': ['pyformat = pyformat:main']},
           test_suite='test_pyformat')

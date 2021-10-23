@@ -372,6 +372,37 @@ def test():
     return 42
 ''', f.read())
 
+
+    def test_sort_imports(self):
+        with temporary_file("""\
+import sys, os
+from __future__ import absolute_import
+import path
+
+def test():
+    return 42
+""") as filename:
+            output_file = io.StringIO()
+            pyformat._main(argv=['my_fake_program',
+                                 '--in-place',
+                                 '--sort-imports',
+                                 filename],
+                           standard_out=output_file,
+                           standard_error=None)
+            with open(filename) as f:
+                self.assertEqual('''\
+from __future__ import absolute_import
+
+import os
+import sys
+
+import path
+
+
+def test():
+    return 42
+''', f.read())
+
     def test_remove_unused_variables(self):
         with temporary_file("""\
 def test():
