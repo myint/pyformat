@@ -29,12 +29,14 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import io
+from pathlib import Path
 import signal
 import sys
 
 import autoflake
 import autopep8
 import docformatter
+import isort
 import unify
 
 
@@ -42,7 +44,8 @@ __version__ = '1.0a0'
 
 
 def formatters(aggressive, apply_config, filename='',
-               remove_all_unused_imports=False, remove_unused_variables=False):
+               remove_all_unused_imports=False, remove_unused_variables=False,
+               sort_imports=False):
     """Return list of code formatters."""
     if aggressive:
         yield lambda code: autoflake.fix_code(
@@ -60,17 +63,27 @@ def formatters(aggressive, apply_config, filename='',
     yield lambda code: autopep8.fix_code(code, options=autopep8_options)
     yield docformatter.format_code
     yield unify.format_code
+    if sort_imports:
+        yield _format_by_isort
+
+
+def _format_by_isort(code):
+    config_dict = {
+        'settings_path': Path('.').resolve().absolute()
+    }
+    config = isort.Config(**config_dict)
+    return isort.code(code=code, config=config)
 
 
 def format_code(source, aggressive=False, apply_config=False, filename='',
                 remove_all_unused_imports=False,
-                remove_unused_variables=False):
+                remove_unused_variables=False, sort_imports=False):
     """Return formatted source code."""
     formatted_source = source
 
     for fix in formatters(
             aggressive, apply_config, filename,
-            remove_all_unused_imports, remove_unused_variables):
+            remove_all_unused_imports, remove_unused_variables, sort_imports):
         formatted_source = fix(formatted_source)
 
     return formatted_source
@@ -96,7 +109,8 @@ def format_file(filename, args, standard_out):
         apply_config=args.config,
         filename=filename,
         remove_all_unused_imports=args.remove_all_unused_imports,
-        remove_unused_variables=args.remove_unused_variables)
+        remove_unused_variables=args.remove_unused_variables,
+        sort_imports=args.sort_imports)
 
     if source != formatted_source:
         if args.in_place:
@@ -179,6 +193,8 @@ def parse_args(argv):
                              '(requires "aggressive")')
     parser.add_argument('--remove-unused-variables', action='store_true',
                         help='remove unused variables (requires "aggressive")')
+    parser.add_argument('--sort-imports', action='store_true',
+                        help='sort imports')
     parser.add_argument('-j', '--jobs', type=int, metavar='n', default=1,
                         help='number of parallel jobs; '
                              'match CPU count if value is less than 1')
