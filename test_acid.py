@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """Test that pyformat runs without crashing on various Python files."""
 
 from __future__ import print_function
