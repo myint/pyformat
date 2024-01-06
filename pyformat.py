@@ -103,12 +103,14 @@ def format_file(filename, args, standard_out):
             with autopep8.open_with_encoding(filename, mode='w',
                                              encoding=encoding) as output_file:
                 output_file.write(formatted_source)
-        else:
+        elif args.diff:
             diff = autopep8.get_diff_text(
                 io.StringIO(source).readlines(),
                 io.StringIO(formatted_source).readlines(),
                 filename)
             standard_out.write(''.join(diff))
+        else:
+            standard_out.write(formatted_source)
 
         return True
 
@@ -169,6 +171,8 @@ def parse_args(argv):
     parser = argparse.ArgumentParser(description=__doc__, prog='pyformat')
     parser.add_argument('-i', '--in-place', action='store_true',
                         help='make changes to files instead of printing diffs')
+    parser.add_argument('-d', '--diff', action='store_true',
+                        help='print the diff for the fixed source')
     parser.add_argument('-r', '--recursive', action='store_true',
                         help='drill down directories recursively')
     parser.add_argument('-a', '--aggressive', action='count', default=0,
